@@ -244,13 +244,13 @@ elif [ "$WINE_BRANCH" = "proton" ]; then
 
 	if [ "${PROTON_BRANCH}" = "experimental_9.0" ] || [ "${PROTON_BRANCH}" = "bleeding-edge" ]; then
 	 patch -d wine -Np1 < "${scriptdir}"/proton-exp-9.0.patch
-  if [ "$TERMUX_GLIBC" = "true" ]; then
-   patch -d wine -Np1 < "${scriptdir}"/esync.patch
-   patch -d wine -Np1 < "${scriptdir}"/termux-wine-fix.patch
-   patch -d wine -Np1 < "${scriptdir}"/pathfix.patch
-  else
-   echo "TERMUX_GLIBC is not set to true. Skipping additional commands."
-   fi
+        if [ "$TERMUX_GLIBC" = "true" ]; then
+        patch -d wine -Np1 < "${scriptdir}"/esync.patch
+        patch -d wine -Np1 < "${scriptdir}"/termux-wine-fix.patch
+        patch -d wine -Np1 < "${scriptdir}"/pathfix.patch
+        else
+        echo "TERMUX_GLIBC is not set to true. Skipping additional commands."
+        fi
 	fi
 
 
@@ -305,9 +305,9 @@ fi
     STAGING_ARGS="--all -W ntdll-Syscall_Emulation"
    elif [ "$TERMUX_GLIBC" = "true" ] && [ "${WINE_BRANCH}" = "vanilla" ] && [ "${EXPERIMENTAL_WOW64}" = "true" ]; then
     STAGING_ARGS="eventfd_synchronization winecfg_Staging"
-elif [ "$TERMUX_GLIBC" = "true" ] && [ "${WINE_BRANCH}" = "vanilla" ]; then
+   elif [ "$TERMUX_GLIBC" = "true" ] && [ "${WINE_BRANCH}" = "vanilla" ]; then
     STAGING_ARGS="eventfd_synchronization winecfg_Staging"
-elif [ "${EXPERIMENTAL_WOW64}" = "true" ]; then
+   elif [ "${EXPERIMENTAL_WOW64}" = "true" ]; then
         STAGING_ARGS="--all -W ntdll-Syscall_Emulation"
     fi
 
@@ -324,7 +324,9 @@ elif [ "${EXPERIMENTAL_WOW64}" = "true" ]; then
 			exit 1
 		fi
 
-		cd "${BUILD_DIR}" || exit 1
+cd "${BUILD_DIR}" || exit 1
+fi
+
 if [ "$TERMUX_GLIBC" = "true" ]; then
     echo "Applying additional patches for Termux Glibc..."
     patch -d wine -Np1 < "${scriptdir}"/esync.patch && \
