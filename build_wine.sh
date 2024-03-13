@@ -45,7 +45,7 @@ export PROTON_BRANCH="${PROTON_BRANCH:-proton_8.0}"
 export STAGING_VERSION="${STAGING_VERSION:-}"
 
 # If you're building specifically for Termux glibc, set this to true
-export TERMUX_GLIBC=true
+export TERMUX_GLIBC="true"
 
 # Specify custom arguments for the Staging's patchinstall.sh script.
 # For example, if you want to disable ntdll-NtAlertThreadByThreadId
