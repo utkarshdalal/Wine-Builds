@@ -44,6 +44,9 @@ export PROTON_BRANCH="${PROTON_BRANCH:-proton_8.0}"
 # Leave this empty to use Staging version that matches the Wine version.
 export STAGING_VERSION="${STAGING_VERSION:-}"
 
+# If you're building specifically for Termux glibc, set this to true
+export TERMUX_GLIBC=true
+
 # Specify custom arguments for the Staging's patchinstall.sh script.
 # For example, if you want to disable ntdll-NtAlertThreadByThreadId
 # patchset, but apply all other patches, then set this variable to
@@ -241,10 +244,15 @@ elif [ "$WINE_BRANCH" = "proton" ]; then
 
 	if [ "${PROTON_BRANCH}" = "experimental_9.0" ] || [ "${PROTON_BRANCH}" = "bleeding-edge" ]; then
 	 patch -d wine -Np1 < "${scriptdir}"/proton-exp-9.0.patch
+  if [ "$TERMUX_GLIBC" = "true" ]; then
    patch -d wine -Np1 < "${scriptdir}"/esync.patch
    patch -d wine -Np1 < "${scriptdir}"/termux-wine-fix.patch
    patch -d wine -Np1 < "${scriptdir}"/pathfix.patch
+  else
+   echo "TERMUX_GLIBC is not set to true. Skipping additional commands."
+   fi
 	fi
+
 
 	WINE_VERSION="$(cat wine/VERSION | tail -c +14)-$(git -C wine rev-parse --short HEAD)"
 	if [[ "${PROTON_BRANCH}" == "experimental_"* ]] || [ "${PROTON_BRANCH}" = "bleeding-edge" ]; then
@@ -264,50 +272,44 @@ else
 		mv "wine-${WINE_VERSION}" wine
 	fi
 
-  if [ "${WINE_BRANCH}" = "vanilla" ]; then
-    git clone https://github.com/wine-staging/wine-staging
-    echo "Patching Wine with Esync and some other goodies..."
-    ./"${BUILD_DIR}"/wine-staging/staging/patchinstall.py DESTDIR="${BUILD_DIR}"/wine eventfd_synchronization winecfg_Staging
-    patch -d wine -Np1 < "${scriptdir}"/esync.patch
-    patch -d wine -Np1 < "${scriptdir}"/termux-wine-fix.patch
-    patch -d wine -Np1 < "${scriptdir}"/pathfix.patch
-    echo "Wine patching is done, proceeding with building..."
-  fi
-     
-	if [ "${WINE_BRANCH}" = "staging" ]; then
-		if [ "${WINE_VERSION}" = "git" ]; then
-			git clone https://github.com/wine-staging/wine-staging wine-staging-"${WINE_VERSION}"
+	if [ "${WINE_VERSION}" = "git" ]; then
+    git clone https://github.com/wine-staging/wine-staging wine-staging-"${WINE_VERSION}"
+    upstream_commit="$(cat wine-staging-"${WINE_VERSION}"/staging/upstream-commit | head -c 7)"
+    git -C wine checkout "${upstream_commit}"
+    BUILD_NAME="${WINE_VERSION}-${upstream_commit}-staging"
+else
+    if [ -n "${STAGING_VERSION}" ]; then
+        WINE_VERSION="${STAGING_VERSION}"
+    fi
 
-			upstream_commit="$(cat wine-staging-"${WINE_VERSION}"/staging/upstream-commit | head -c 7)"
-			git -C wine checkout "${upstream_commit}"
-			BUILD_NAME="${WINE_VERSION}-${upstream_commit}-staging"
-		else
-			if [ -n "${STAGING_VERSION}" ]; then
-				WINE_VERSION="${STAGING_VERSION}"
-			fi
+    BUILD_NAME="${WINE_VERSION}"-staging
 
-			BUILD_NAME="${WINE_VERSION}"-staging
+    wget -q --show-progress "https://github.com/wine-staging/wine-staging/archive/v${WINE_VERSION}.tar.gz"
+    tar xf v"${WINE_VERSION}".tar.gz
 
-			wget -q --show-progress "https://github.com/wine-staging/wine-staging/archive/v${WINE_VERSION}.tar.gz"
-			tar xf v"${WINE_VERSION}".tar.gz
+    if [ ! -f v"${WINE_VERSION}".tar.gz ]; then
+        git clone https://github.com/wine-staging/wine-staging wine-staging-"${WINE_VERSION}"
+    fi
+fi
 
-			if [ ! -f v"${WINE_VERSION}".tar.gz ]; then
-				git clone https://github.com/wine-staging/wine-staging wine-staging-"${WINE_VERSION}"
-			fi
-		fi
+if [ -f wine-staging-"${WINE_VERSION}"/patches/patchinstall.sh ]; then
+    staging_patcher=("${BUILD_DIR}"/wine-staging-"${WINE_VERSION}"/patches/patchinstall.sh
+                    DESTDIR="${BUILD_DIR}"/wine)
+else
+    staging_patcher=("${BUILD_DIR}"/wine-staging-"${WINE_VERSION}"/staging/patchinstall.py)
+fi
 
-		if [ -f wine-staging-"${WINE_VERSION}"/patches/patchinstall.sh ]; then
-			staging_patcher=("${BUILD_DIR}"/wine-staging-"${WINE_VERSION}"/patches/patchinstall.sh
-							DESTDIR="${BUILD_DIR}"/wine)
-		else
-			staging_patcher=("${BUILD_DIR}"/wine-staging-"${WINE_VERSION}"/staging/patchinstall.py)
-		fi
-
-		if [ "${EXPERIMENTAL_WOW64}" = "true" ]; then
-  			if ! grep Disabled "${BUILD_DIR}"/wine-staging-"${WINE_VERSION}"/patches/ntdll-Syscall_Emulation/definition 1>/dev/null; then
-				STAGING_ARGS="--all -W ntdll-Syscall_Emulation"
-			fi
-		fi
+   if [ "$TERMUX_GLIBC" = "true" ] && [ "$WINE_BRANCH" = "staging" ] && [ "${EXPERIMENTAL_WOW64}" = "true" ]; then
+    STAGING_ARGS="--all -W ntdll-Syscall_Emulation"
+   elif [ "$TERMUX_GLIBC" = "true" ] && [ "$WINE_BRANCH" = "staging" ]; then
+    STAGING_ARGS="--all -W ntdll-Syscall_Emulation"
+   elif [ "$TERMUX_GLIBC" = "true" ] && [ "${WINE_BRANCH}" = "vanilla" ] && [ "${EXPERIMENTAL_WOW64}" = "true" ]; then
+    STAGING_ARGS="eventfd_synchronization winecfg_Staging"
+elif [ "$TERMUX_GLIBC" = "true" ] && [ "${WINE_BRANCH}" = "vanilla" ]; then
+    STAGING_ARGS="eventfd_synchronization winecfg_Staging"
+elif [ "${EXPERIMENTAL_WOW64}" = "true" ]; then
+        STAGING_ARGS="--all -W ntdll-Syscall_Emulation"
+    fi
 
 		cd wine || exit 1
 		if [ -n "${STAGING_ARGS}" ]; then
@@ -315,7 +317,7 @@ else
 		else
 			"${staging_patcher[@]}" --all
 		fi
-
+     
 		if [ $? -ne 0 ]; then
 			echo
 			echo "Wine-Staging patches were not applied correctly!"
@@ -323,7 +325,15 @@ else
 		fi
 
 		cd "${BUILD_DIR}" || exit 1
-	fi
+if [ "$TERMUX_GLIBC" = "true" ]; then
+    echo "Applying additional patches for Termux Glibc..."
+    patch -d wine -Np1 < "${scriptdir}"/esync.patch && \
+    patch -d wine -Np1 < "${scriptdir}"/termux-wine-fix.patch && \
+    patch -d wine -Np1 < "${scriptdir}"/pathfix.patch || {
+        echo "Error: Failed to apply one or more patches."
+        exit 1
+    }
+    clear
 fi
 
 if [ ! -d wine ]; then
