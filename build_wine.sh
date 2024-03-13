@@ -260,19 +260,20 @@ else
 		BUILD_NAME="${WINE_VERSION}"
 
 		wget -q --show-progress "https://dl.winehq.org/wine/source/${WINE_URL_VERSION}/wine-${WINE_VERSION}.tar.xz"
-
 		tar xf "wine-${WINE_VERSION}.tar.xz"
 		mv "wine-${WINE_VERSION}" wine
+	fi
+
+  if [ "${WINE_BRANCH}" = "vanilla" ]; then
     git clone https://github.com/wine-staging/wine-staging
     echo "Patching Wine with Esync and some other goodies..."
-    cd wine-staging; 
-    ./staging/patchinstall.py DESTDIR="${BUILD_DIR}"/wine eventfd_synchronization winecfg_Staging
+    ./"${BUILD_DIR}"/wine-staging/staging/patchinstall.py DESTDIR="${BUILD_DIR}"/wine eventfd_synchronization winecfg_Staging
     patch -d wine -Np1 < "${scriptdir}"/esync.patch
     patch -d wine -Np1 < "${scriptdir}"/termux-wine-fix.patch
     patch -d wine -Np1 < "${scriptdir}"/pathfix.patch
     echo "Wine patching is done, proceeding with building..."
-	fi
-
+  fi
+     
 	if [ "${WINE_BRANCH}" = "staging" ]; then
 		if [ "${WINE_VERSION}" = "git" ]; then
 			git clone https://github.com/wine-staging/wine-staging wine-staging-"${WINE_VERSION}"
