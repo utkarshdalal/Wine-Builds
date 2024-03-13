@@ -346,6 +346,9 @@ if [ ! -d wine ]; then
 fi
 
 cd wine || exit 1
+if [ "$WINE_BRANCH" = "vanilla" ]; then
+git revert --no-commit 2bfe81e41f93ce75139e3a6a2d0b68eb2dcb8fa6
+fi
 dlls/winevulkan/make_vulkan
 tools/make_requests
 tools/make_specfiles
