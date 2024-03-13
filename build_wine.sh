@@ -228,6 +228,9 @@ elif [ "$WINE_BRANCH" = "wayland" ]; then
 elif [ "$WINE_BRANCH" = "proton" ]; then
 	if [ -z "${PROTON_BRANCH}" ]; then
 		git clone https://github.com/ValveSoftware/wine
+   patch -d wine -Np1 < "${scriptdir}"/esync.patch
+   patch -d wine -Np1 < "${scriptdir}"/termux-wine-fix.patch
+   patch -d wine -Np1 < "${scriptdir}"/pathfix.patch
 	else
 		git clone https://github.com/ValveSoftware/wine -b "${PROTON_BRANCH}"
 	fi
@@ -237,7 +240,10 @@ elif [ "$WINE_BRANCH" = "proton" ]; then
 	fi
 
 	if [ "${PROTON_BRANCH}" = "experimental_9.0" ] || [ "${PROTON_BRANCH}" = "bleeding-edge" ]; then
-		patch -d wine -Np1 < "${scriptdir}"/proton-exp-9.0.patch
+	 patch -d wine -Np1 < "${scriptdir}"/proton-exp-9.0.patch
+   patch -d wine -Np1 < "${scriptdir}"/esync.patch
+   patch -d wine -Np1 < "${scriptdir}"/termux-wine-fix.patch
+   patch -d wine -Np1 < "${scriptdir}"/pathfix.patch
 	fi
 
 	WINE_VERSION="$(cat wine/VERSION | tail -c +14)-$(git -C wine rev-parse --short HEAD)"
@@ -257,6 +263,14 @@ else
 
 		tar xf "wine-${WINE_VERSION}.tar.xz"
 		mv "wine-${WINE_VERSION}" wine
+    git clone https://github.com/wine-staging/wine-staging
+    echo "Patching Wine with Esync and some other goodies..."
+    cd wine-staging; 
+    ./staging/patchinstall.py DESTDIR="${BUILD_DIR}"/wine eventfd_synchronization winecfg_Staging
+    patch -d wine -Np1 < "${scriptdir}"/esync.patch
+    patch -d wine -Np1 < "${scriptdir}"/termux-wine-fix.patch
+    patch -d wine -Np1 < "${scriptdir}"/pathfix.patch
+    echo "Wine patching is done, proceeding with building..."
 	fi
 
 	if [ "${WINE_BRANCH}" = "staging" ]; then
