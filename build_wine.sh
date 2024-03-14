@@ -272,7 +272,7 @@ else
         WINE_VERSION="${STAGING_VERSION}"
     fi
 
-    if [ "$TERMUX_GLIBC" = "true" ] && [ "${WINE_BRANCH}" = "vanilla" ]; then
+    if [ "${WINE_BRANCH}" = "vanilla" ]; then
     BUILD_NAME="${WINE_VERSION}"
     else
     BUILD_NAME="${WINE_VERSION}"-staging
