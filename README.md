@@ -1,3 +1,9 @@
+## Introduction
+
+This is essentially a repurposed Wine build script which was made by a fellow legend Kron4ek. It was modified in such a way where it would be feasible to build Wine for Termux Glibc environment. It requires certain changes like different path locations, modified memory addresses due to how different Termux's root file system is and how it works in general. Without these changes, regular Wine builds would not be usable in any way, shape or form.
+
+While it builds upon Kron4ek's work, it might get changed down the road. Currently, it's in a very early state capable of building ONLY vanilla Wine builds with modifications mentioned above.
+
 ## Download
 
 The builds can be downloaded either from [**the releases page**](https://github.com/Kron4ek/Wine-Builds/releases) or from the **[MEGA](https://mega.nz/folder/ZZUV1K7J#kIenmTQoi0if-SAcMSuAHA)** cloud. 
