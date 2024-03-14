@@ -294,7 +294,7 @@ fi
 
    if [ "$TERMUX_GLIBC" = "true" ] && [ "$WINE_BRANCH" = "staging" ] && [ "${EXPERIMENTAL_WOW64}" = "true" ]; then
     STAGING_ARGS="--all -W ntdll-Syscall_Emulation"
-   elif [ "$TERMUX_GLIBC" = "true" ] && [ "${WINE_BRANCH" = "staging" ]; then
+   elif [ "$TERMUX_GLIBC" = "true" ] && [ "$WINE_BRANCH" = "staging" ]; then
     STAGING_ARGS="--all -W ntdll-Syscall_Emulation"
    elif [ "$TERMUX_GLIBC" = "true" ] && [ "${WINE_BRANCH}" = "vanilla" ] && [ "${EXPERIMENTAL_WOW64}" = "true" ]; then
     STAGING_ARGS="eventfd_synchronization winecfg_Staging"
