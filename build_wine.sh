@@ -231,9 +231,6 @@ elif [ "$WINE_BRANCH" = "wayland" ]; then
 elif [ "$WINE_BRANCH" = "proton" ]; then
 	if [ -z "${PROTON_BRANCH}" ]; then
 		git clone https://github.com/ValveSoftware/wine
-   patch -d wine -Np1 < "${scriptdir}"/esync.patch
-   patch -d wine -Np1 < "${scriptdir}"/termux-wine-fix.patch
-   patch -d wine -Np1 < "${scriptdir}"/pathfix.patch
 	else
 		git clone https://github.com/ValveSoftware/wine -b "${PROTON_BRANCH}"
 	fi
@@ -244,13 +241,6 @@ elif [ "$WINE_BRANCH" = "proton" ]; then
 
 	if [ "${PROTON_BRANCH}" = "experimental_9.0" ] || [ "${PROTON_BRANCH}" = "bleeding-edge" ]; then
 	 patch -d wine -Np1 < "${scriptdir}"/proton-exp-9.0.patch
-        if [ "$TERMUX_GLIBC" = "true" ]; then
-        patch -d wine -Np1 < "${scriptdir}"/esync.patch
-        patch -d wine -Np1 < "${scriptdir}"/termux-wine-fix.patch
-        patch -d wine -Np1 < "${scriptdir}"/pathfix.patch
-        else
-        echo "TERMUX_GLIBC is not set to true. Skipping additional commands."
-        fi
 	fi
 
 
@@ -299,23 +289,24 @@ else
     staging_patcher=("${BUILD_DIR}"/wine-staging-"${WINE_VERSION}"/staging/patchinstall.py)
 fi
 
+# Wine-Staging patch arguments
+# Not recommended to change these if statements unless you know what you are doing.
+
    if [ "$TERMUX_GLIBC" = "true" ] && [ "$WINE_BRANCH" = "staging" ] && [ "${EXPERIMENTAL_WOW64}" = "true" ]; then
     STAGING_ARGS="--all -W ntdll-Syscall_Emulation"
-   elif [ "$TERMUX_GLIBC" = "true" ] && [ "$WINE_BRANCH" = "staging" ]; then
+   elif [ "$TERMUX_GLIBC" = "true" ] && [ "${WINE_BRANCH" = "staging" ]; then
     STAGING_ARGS="--all -W ntdll-Syscall_Emulation"
    elif [ "$TERMUX_GLIBC" = "true" ] && [ "${WINE_BRANCH}" = "vanilla" ] && [ "${EXPERIMENTAL_WOW64}" = "true" ]; then
     STAGING_ARGS="eventfd_synchronization winecfg_Staging"
    elif [ "$TERMUX_GLIBC" = "true" ] && [ "${WINE_BRANCH}" = "vanilla" ]; then
     STAGING_ARGS="eventfd_synchronization winecfg_Staging"
-   elif [ "${EXPERIMENTAL_WOW64}" = "true" ]; then
-        STAGING_ARGS="--all -W ntdll-Syscall_Emulation"
     fi
 
 		cd wine || exit 1
 		if [ -n "${STAGING_ARGS}" ]; then
 			"${staging_patcher[@]}" ${STAGING_ARGS}
 		else
-			"${staging_patcher[@]}" --all
+			echo "Skipping Wine-Staging patches..."
 		fi
      
 		if [ $? -ne 0 ]; then
@@ -377,6 +368,23 @@ fi
 BWRAP64="build_with_bwrap 64"
 BWRAP32="build_with_bwrap 32"
 
+if [ "${EXPERIMENTAL_WOW64}" = "true" ]; then
+
+export CROSSCC="${CROSSCC_X64}"
+export CROSSCXX="${CROSSCXX_X64}"
+export CFLAGS="${CFLAGS_X64}"
+export CXXFLAGS="${CFLAGS_X64}"
+export CROSSCFLAGS="${CROSSCFLAGS_X64}"
+export CROSSCXXFLAGS="${CROSSCFLAGS_X64}"
+
+mkdir "${BUILD_DIR}"/build64
+cd "${BUILD_DIR}"/build64 || exit
+${BWRAP64} "${BUILD_DIR}"/wine/configure --enable-archs=i386,x86_64 ${WINE_BUILD_OPTIONS} --prefix "${BUILD_DIR}"/wine-"${BUILD_NAME}"-amd64
+${BWRAP64} make -j$(nproc)
+${BWRAP64} make install
+
+else
+
 export CROSSCC="${CROSSCC_X64}"
 export CROSSCXX="${CROSSCXX_X64}"
 export CFLAGS="${CFLAGS_X64}"
@@ -414,6 +422,8 @@ PKG_CONFIG_LIBDIR=/usr/lib/i386-linux-gnu/pkgconfig:/usr/local/lib/pkgconfig:/us
 ${BWRAP32} make -j$(nproc)
 ${BWRAP32} make install
 
+fi
+
 echo
 echo "Compilation complete"
 echo "Creating and compressing archives..."
@@ -443,11 +453,6 @@ for build in ${builds_list}; do
 
 		if [ -f wine/wine-tkg-config.txt ]; then
 			cp wine/wine-tkg-config.txt "${build}"
-		fi
-
-		if [ "${EXPERIMENTAL_WOW64}" = "true" ]; then
-			rm "${build}"/bin/wine "${build}"/bin/wine-preloader
-			cp "${build}"/bin/wine64 "${build}"/bin/wine
 		fi
 
 		tar -Jcf "${build}".tar.xz "${build}"
