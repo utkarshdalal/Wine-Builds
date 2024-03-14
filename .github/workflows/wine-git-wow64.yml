@@ -1,8 +1,8 @@
-name: Wine-32on64-WoW64 CI
+name: Wine-Git WoW64 CI
 
 on:
   schedule:
-    - cron:  '0 0 1 * *'
+    - cron:  '0 0 */3 * *'
   workflow_dispatch:
 
 jobs:
@@ -25,12 +25,12 @@ jobs:
           sudo apt install debootstrap perl git wget xz-utils bubblewrap autoconf
           sudo tar -C /opt -xpf /opt/Bootstraps/bootstraps.tar.xz
           chmod +x build_wine.sh
-          export WINE_VERSION="latest"
           export EXPERIMENTAL_WOW64="true"
+          export WINE_VERSION="git"
           WINE_BRANCH=vanilla ./build_wine.sh
           WINE_BRANCH=staging ./build_wine.sh
           sha256sum *.tar.xz
       - uses: actions/upload-artifact@v3
         with:
-          name: Wine-32on64-WoW64
+          name: Wine-Git
           path: ./*.tar.xz
