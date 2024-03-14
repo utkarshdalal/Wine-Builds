@@ -262,6 +262,7 @@ else
 		mv "wine-${WINE_VERSION}" wine
 	fi
 
+        if [ "$WINE_BRANCH" = "staging" ] || [ "$WINE_BRANCH" = "vanilla" ]; then
 	if [ "${WINE_VERSION}" = "git" ]; then
     git clone https://github.com/wine-staging/wine-staging wine-staging-"${WINE_VERSION}"
     upstream_commit="$(cat wine-staging-"${WINE_VERSION}"/staging/upstream-commit | head -c 7)"
@@ -291,6 +292,7 @@ if [ -f wine-staging-"${WINE_VERSION}"/patches/patchinstall.sh ]; then
                     DESTDIR="${BUILD_DIR}"/wine)
 else
     staging_patcher=("${BUILD_DIR}"/wine-staging-"${WINE_VERSION}"/staging/patchinstall.py)
+fi
 fi
 
 # Wine-Staging patch arguments
