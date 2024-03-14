@@ -267,7 +267,11 @@ else
     git clone https://github.com/wine-staging/wine-staging wine-staging-"${WINE_VERSION}"
     upstream_commit="$(cat wine-staging-"${WINE_VERSION}"/staging/upstream-commit | head -c 7)"
     git -C wine checkout "${upstream_commit}"
+    if [ "$WINE_BRANCH" = "vanilla" ]; then
+    BUILD_NAME="${WINE_VERSION}-${upstream_commit}"
+    else
     BUILD_NAME="${WINE_VERSION}-${upstream_commit}-staging"
+    fi
 else
     if [ -n "${STAGING_VERSION}" ]; then
         WINE_VERSION="${STAGING_VERSION}"
