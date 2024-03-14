@@ -272,7 +272,11 @@ else
         WINE_VERSION="${STAGING_VERSION}"
     fi
 
+    if [ "$TERMUX_GLIBC" = "true" ] && [ "${WINE_BRANCH}" = "vanilla" ]; then
+    BUILD_NAME="${WINE_VERSION}"
+    else
     BUILD_NAME="${WINE_VERSION}"-staging
+fi
 
     wget -q --show-progress "https://github.com/wine-staging/wine-staging/archive/v${WINE_VERSION}.tar.gz"
     tar xf v"${WINE_VERSION}".tar.gz
