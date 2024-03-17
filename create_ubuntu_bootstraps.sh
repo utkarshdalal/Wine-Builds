@@ -10,7 +10,7 @@
 
 # If you are planning to only build WoW64 Wine, you can switch to newer Ubuntu release.
 # Keep in mind, that this is only for 64 bit builds. Support for i386 Ubuntu has ended.
-export EXPERIMENTAL_WOW64=""
+export EXPERIMENTAL_WOW64="true"
 
 if [ "$EUID" != 0 ]; then
 	echo "This script requires root rights!"
@@ -24,7 +24,7 @@ fi
 
 # Keep in mind that although you can choose any version of Ubuntu/Debian
 # here, but this script has only been tested with Ubuntu 18.04 Bionic
-if [ "$EXPERIMENTAL_WOW64" = "true" ]; then
+if [ "${EXPERIMENTAL_WOW64}" = "true" ]; then
 export CHROOT_DISTRO="jammy"
 else
 export CHROOT_DISTRO="bionic"
@@ -36,7 +36,7 @@ export CHROOT_MIRROR="https://ftp.uni-stuttgart.de/ubuntu/"
 # Also don't forget to change the path to the chroots in the build_wine.sh
 # script, if you are going to use it
 export MAINDIR=/opt/chroots
-if [ "$EXPERIMENTAL_WOW64" = "true" ]; then
+if [ "{$EXPERIMENTAL_WOW64}" = "true" ]; then
 export CHROOT_X64="${MAINDIR}"/${CHROOT_DISTRO}64_chroot
 else
 export CHROOT_X32="${MAINDIR}"/${CHROOT_DISTRO}32_chroot
@@ -175,7 +175,7 @@ EOF
 
 mkdir -p "${MAINDIR}"
 
-if [ "$EXPERIMENTAL_WOW64" = "true" ]; then
+if [ "${EXPERIMENTAL_WOW64}" = "true" ]; then
 debootstrap --arch amd64 $CHROOT_DISTRO "${CHROOT_X64}" $CHROOT_MIRROR
 else
 debootstrap --arch amd64 $CHROOT_DISTRO "${CHROOT_X64}" $CHROOT_MIRROR
@@ -183,7 +183,7 @@ debootstrap --arch i386 $CHROOT_DISTRO "${CHROOT_X32}" $CHROOT_MIRROR
 fi
 
 create_build_scripts
-if [ "$EXPERIMENTAL_WOW64" = "true" ]; then
+if [ "{$EXPERIMENTAL_WOW64}" = "true" ]; then
 prepare_chroot 64
 else
 prepare_chroot 32
