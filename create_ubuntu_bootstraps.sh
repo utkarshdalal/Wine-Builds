@@ -8,6 +8,10 @@
 ## About 5.5 GB of free space is required
 ## And additional 2.5 GB is required for Wine compilation
 
+# If you are planning to only build WoW64 Wine, you can switch to newer Ubuntu release.
+# Keep in mind, that this is only for 64 bit builds. Support for i386 Ubuntu has ended.
+export EXPERIMENTAL_WOW64=""
+
 if [ "$EUID" != 0 ]; then
 	echo "This script requires root rights!"
 	exit 1
@@ -20,15 +24,24 @@ fi
 
 # Keep in mind that although you can choose any version of Ubuntu/Debian
 # here, but this script has only been tested with Ubuntu 18.04 Bionic
+if [ "$EXPERIMENTAL_WOW64" = "true" ]; then
 export CHROOT_DISTRO="jammy"
+else
+export CHROOT_DISTRO="bionic"
+fi
+
 export CHROOT_MIRROR="https://ftp.uni-stuttgart.de/ubuntu/"
 
 # Set your preferred path for storing chroots
 # Also don't forget to change the path to the chroots in the build_wine.sh
 # script, if you are going to use it
 export MAINDIR=/opt/chroots
+if [ "$EXPERIMENTAL_WOW64" = "true" ]; then
 export CHROOT_X64="${MAINDIR}"/${CHROOT_DISTRO}64_chroot
+else
 export CHROOT_X32="${MAINDIR}"/${CHROOT_DISTRO}32_chroot
+export CHROOT_X64="${MAINDIR}"/${CHROOT_DISTRO}64_chroot
+fi
 
 prepare_chroot () {
 	if [ "$1" = "32" ]; then
