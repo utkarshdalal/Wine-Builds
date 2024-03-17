@@ -16,6 +16,7 @@ jobs:
         run: |
           sudo apt update
           sudo apt install debootstrap perl
+          export EXPERIMENTAL_WOW64="true"
           chmod +x create_ubuntu_bootstraps.sh
           sudo ./create_ubuntu_bootstraps.sh
           cd /opt
