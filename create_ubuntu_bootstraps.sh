@@ -20,7 +20,7 @@ fi
 
 # Keep in mind that although you can choose any version of Ubuntu/Debian
 # here, but this script has only been tested with Ubuntu 18.04 Bionic
-export CHROOT_DISTRO="bionic"
+export CHROOT_DISTRO="jammy"
 export CHROOT_MIRROR="https://ftp.uni-stuttgart.de/ubuntu/"
 
 # Set your preferred path for storing chroots
@@ -97,7 +97,7 @@ add-apt-repository -y ppa:ubuntu-toolchain-r/test
 add-apt-repository -y ppa:cybermax-dexter/mingw-w64-backport
 apt-get update
 apt-get -y build-dep wine-development libsdl2 libvulkan1
-apt-get -y install ccache gcc-9 g++-9 wget git gcc-mingw-w64 g++-mingw-w64
+apt-get -y install ccache gcc-13 g++-13 wget git gcc-mingw-w64 g++-mingw-w64
 apt-get -y install libxpresent-dev libjxr-dev libusb-1.0-0-dev libgcrypt20-dev libpulse-dev libudev-dev libsane-dev libv4l-dev libkrb5-dev libgphoto2-dev liblcms2-dev libcapi20-dev
 apt-get -y install libjpeg62-dev samba-dev
 apt-get -y install libpcsclite-dev libcups2-dev
