@@ -175,12 +175,20 @@ EOF
 
 mkdir -p "${MAINDIR}"
 
+if [ "$EXPERIMENTAL_WOW64" = "true" ]; then
+debootstrap --arch amd64 $CHROOT_DISTRO "${CHROOT_X64}" $CHROOT_MIRROR
+else
 debootstrap --arch amd64 $CHROOT_DISTRO "${CHROOT_X64}" $CHROOT_MIRROR
 debootstrap --arch i386 $CHROOT_DISTRO "${CHROOT_X32}" $CHROOT_MIRROR
+fi
 
 create_build_scripts
+if [ "$EXPERIMENTAL_WOW64" = "true" ]; then
+prepare_chroot 64
+else
 prepare_chroot 32
 prepare_chroot 64
+fi
 
 rm "${CHROOT_X64}"/opt/prepare_chroot.sh
 rm "${CHROOT_X32}"/opt/prepare_chroot.sh
