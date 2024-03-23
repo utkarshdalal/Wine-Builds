@@ -335,9 +335,7 @@ if [ "$TERMUX_GLIBC" = "true" ]; then
     patch -d wine -Np1 < "${scriptdir}"/esync.patch && \
     patch -d wine -Np1 < "${scriptdir}"/termux-wine-fix-staging.patch && \
     patch -d wine -Np1 < "${scriptdir}"/pathfix.patch
-    patch -d wine -Np1 < "${scriptdir}"/wine-cpu-topology.patch
     else
-    patch -d wine -Np1 < "${scriptdir}"/wine-cpu-topology.patch
     patch -d wine -Np1 < "${scriptdir}"/esync.patch && \
     patch -d wine -Np1 < "${scriptdir}"/termux-wine-fix.patch && \
     patch -d wine -Np1 < "${scriptdir}"/pathfix.patch || {
@@ -346,6 +344,13 @@ if [ "$TERMUX_GLIBC" = "true" ]; then
     }
     clear
 fi
+fi
+if [ "$WINE_BRANCH" = "vanilla" ] || [ "$WINE_BRANCH" = "staging" ]; then
+    patch -d wine -Np1 < "${scriptdir}"/wine-cpu-topology.patch || {
+        echo "Error: failed to apply CPU topology patch..."
+	exit 1
+    }
+    clear
 fi
 
 if [ ! -d wine ]; then
