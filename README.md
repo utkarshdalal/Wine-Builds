@@ -103,4 +103,4 @@ These scripts are a pretty convenient way to compile your own Wine builds if you
 
 ### Credits
 
-Big thanks to: Olegos, JeezDizRezz, Hugo, askorbinovaya_kislota and a bunch of others who helped me figure out a way to build Wine for Termux Glibc. Thank you!
+Big thanks to: Olegos, JeezDisReez, Hugo, askorbinovaya_kislota and a bunch of others who helped me figure out a way to build Wine for Termux Glibc. Thank you!
