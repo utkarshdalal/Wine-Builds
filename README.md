@@ -100,3 +100,7 @@ These scripts are a pretty convenient way to compile your own Wine builds if you
 * https://github.com/varmd/wine-wayland
 * https://github.com/Kron4ek/wine-wayland
 * https://gitlab.collabora.com/alf/wine/-/tree/wayland
+
+### Credits
+
+Big thanks to: Olegos, JeezDizRezz, Hugo, askorbinovaya_kislota and a bunch of others who helped me figure out a way to build Wine for Termux Glibc. Thank you!
