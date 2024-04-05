@@ -338,7 +338,7 @@ if [ "$TERMUX_GLIBC" = "true" ]; then
     else
     patch -d wine -Np1 < "${scriptdir}"/esync.patch && \
     patch -d wine -Np1 < "${scriptdir}"/termux-wine-fix.patch && \
-    if git log | grep -q 4e04b2d5282e4ef769176c94b4b38b5fba006a06; then
+    if git -C "${BUILD_DIR}" log -- "${BUILD_DIR}/wine" | grep -q 4e04b2d5282e4ef769176c94b4b38b5fba006a06; then
     patch -d wine -Np1 < "${scriptdir}"/pathfix-wine9.5.patch
     else
     patch -d wine -Np1 < "${scriptdir}"/pathfix.patch
