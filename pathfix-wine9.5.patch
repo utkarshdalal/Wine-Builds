@@ -19,7 +19,7 @@ index 438c165..c35352b 100644
      asprintf( &dir, "%s/.wineserver/server-%llx-%llx", config_dir, (unsigned long long)dev, (unsigned long long)ino );
  #else
 -    asprintf( &dir, "/tmp/.wine-%u/server-%llx-%llx", getuid(), (unsigned long long)dev, (unsigned long long)ino );
-+    asprintf( &dir, "data/data/com.termux/files/usr/tmp/.wine-%u/server-%llx-%llx", getuid(), (unsigned long long)dev, (unsigned long long)ino );
++    asprintf( &dir, "/data/data/com.termux/files/usr/tmp/.wine-%u/server-%llx-%llx", getuid(), (unsigned long long)dev, (unsigned long long)ino );
  #endif
      return dir;
  }
@@ -45,7 +45,7 @@ index 2691e0c..df1aeea 100644
          fatal_error( "out of memory\n" );
  #else
 -    if (asprintf( &base_dir, "/tmp/.wine-%u", getuid() ) == -1)
-+    if (asprintf( &base_dir, "data/data/com.termux/files/usr/tmp/.wine-%u", getuid() ) == -1)
++    if (asprintf( &base_dir, "/data/data/com.termux/files/usr/tmp/.wine-%u", getuid() ) == -1)
          fatal_error( "out of memory\n" );
  #endif
      create_dir( base_dir, &st2 );
