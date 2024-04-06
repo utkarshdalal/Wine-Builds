@@ -44,8 +44,18 @@ export PROTON_BRANCH="${PROTON_BRANCH:-proton_8.0}"
 # Leave this empty to use Staging version that matches the Wine version.
 export STAGING_VERSION="${STAGING_VERSION:-}"
 
-# If you're building specifically for Termux glibc, set this to true
-export TERMUX_GLIBC="true"
+#######################################################################
+# If you're building specifically for Termux glibc, set this to true.
+export TERMUX_GLIBC="${TERMUX_GLIBC:-true}"
+
+# If you want to build Wine for proot/chroot, set this to true.
+# It will incorporate address space adjustment which might improve
+# compatibility. ARM CPUs are limited in this case.
+export TERMUX_PROOT="${TERMUX_PROOT:-false}"
+
+# These two variables cannot be "true" at the same time, otherwise Wine
+# will not build. Select only one which is appropriate to you.
+#######################################################################
 
 # Specify custom arguments for the Staging's patchinstall.sh script.
 # For example, if you want to disable ntdll-NtAlertThreadByThreadId
@@ -149,6 +159,21 @@ build_with_bwrap () {
 		  --setenv PATH "/bin:/sbin:/usr/bin:/usr/sbin" \
 			"$@"
 }
+
+# Prints out which environment you are building Wine for.
+# Easier to debug script errors.
+
+if [ "$TERMUX_PROOT" = "true" ]; then
+   echo "Building Wine for proot/chroot environment"
+fi
+if [ "$TERMUX_GLIBC" = "true" ]; then
+   echo "Building Wine for glibc native environment"
+fi
+if [ "${EXPERIMENTAL_WOW64}" = "true" ]; then
+   echo "Building Wine in experimental WoW64 mode"
+fi
+
+sleep 3
 
 if ! command -v git 1>/dev/null; then
 	echo "Please install git and run the script again"
@@ -310,6 +335,14 @@ fi
     STAGING_ARGS="eventfd_synchronization winecfg_Staging"
    elif [ "$TERMUX_GLIBC" = "true" ] && [ "${WINE_BRANCH}" = "vanilla" ]; then
     STAGING_ARGS="eventfd_synchronization winecfg_Staging"
+   elif [ "$TERMUX_PROOT" = "true" ] && [ "${WINE_BRANCH}" = "vanilla" ]; then
+    STAGING_ARGS="eventfd_synchronization winecfg_Staging"
+   elif [ "$TERMUX_PROOT" = "true" ] && [ "${WINE_BRANCH}" = "staging" ]; then
+    STAGING_ARGS="--all -W ntdll-Syscall_Emulation"
+   elif [ "$TERMUX_PROOT" = "true" ] && [ "$WINE_BRANCH" = "staging" ] && [ "${EXPERIMENTAL_WOW64}" = "true" ]; then
+    STAGING_ARGS="--all -W ntdll-Syscall_Emulation"
+   elif [ "$TERMUX_PROOT" = "true" ] && [ "$WINE_BRANCH" = "vanilla" ] && [ "${EXPERIMENTAL_WOW64}" = "true" ]; then
+    STAGING_ARGS="eventfd_synchronization winecfg_Staging"
     fi
 
 		cd wine || exit 1
@@ -328,6 +361,24 @@ fi
 cd "${BUILD_DIR}" || exit 1
 fi
 
+if [ "$TERMUX_PROOT" = "true" ]; then
+    if [ "$WINE_BRANCH" = "staging" ] || [ "$WINE_BRANCH" = "staging-tkg" ]; then
+    echo "Applying address patch to proot/chroot Wine build..."
+    patch -d wine -Np1 < "${scriptdir}"/termux-wine-fix-staging.patch || {
+        echo "Error: Failed to apply one or more patches."
+        exit 1
+    }
+    clear
+    elif [ "$WINE_BRANCH" = "vanilla" ]; then
+    echo "Applying address patch to proot/chroot Wine build..."
+    patch -d wine -Np1 < "${scriptdir}"/termux-wine-fix.patch || {
+        echo "Error: Failed to apply one or more patches."
+        exit 1
+    }
+    clear
+fi
+fi
+
 if [ "$TERMUX_GLIBC" = "true" ]; then
     echo "Applying additional patches for Termux Glibc..."
 
@@ -338,7 +389,11 @@ if [ "$TERMUX_GLIBC" = "true" ]; then
     patch -d wine -Np1 < "${scriptdir}"/pathfix-wine9.5.patch
     else
     patch -d wine -Np1 < "${scriptdir}"/pathfix.patch
-    fi
+    fi || {
+        echo "Error: Failed to apply one or more patches."
+        exit 1
+    }
+    clear
     else
     patch -d wine -Np1 < "${scriptdir}"/esync.patch && \
     patch -d wine -Np1 < "${scriptdir}"/termux-wine-fix.patch && \
@@ -353,6 +408,7 @@ if [ "$TERMUX_GLIBC" = "true" ]; then
     clear
 fi
 fi
+
 #if [ "$WINE_BRANCH" = "vanilla" ] || [ "$WINE_BRANCH" = "staging" ]; then
 #    patch -d wine -Np1 < "${scriptdir}"/wine-cpu-topology.patch || {
 #        echo "Error: failed to apply CPU topology patch..."
