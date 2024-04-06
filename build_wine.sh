@@ -364,14 +364,14 @@ fi
 if [ "$TERMUX_PROOT" = "true" ]; then
     if [ "$WINE_BRANCH" = "staging" ] || [ "$WINE_BRANCH" = "staging-tkg" ]; then
     echo "Applying address patch to proot/chroot Wine build..."
-    patch -d wine -Np1 < "${scriptdir}"/termux-wine-fix-staging.patch || {
+    patch -d wine -Np1 < "${scriptdir}"/address-space-proot.patch || {
         echo "Error: Failed to apply one or more patches."
         exit 1
     }
     clear
     elif [ "$WINE_BRANCH" = "vanilla" ]; then
     echo "Applying address patch to proot/chroot Wine build..."
-    patch -d wine -Np1 < "${scriptdir}"/termux-wine-fix.patch || {
+    patch -d wine -Np1 < "${scriptdir}"/address-space-proot.patch || {
         echo "Error: Failed to apply one or more patches."
         exit 1
     }
