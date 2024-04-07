@@ -379,12 +379,18 @@ if [ "$TERMUX_PROOT" = "true" ]; then
 fi
 fi
 
+# Checks which Wine branch you are building and applies additional convenient patches.
+# Staging-tkg part isn't finished and will not build if it's Wine 9.4 and lower.
+
 if [ "$TERMUX_GLIBC" = "true" ]; then
     echo "Applying additional patches for Termux Glibc..."
 
-    if [ "$WINE_BRANCH" = "staging" ] || [ "$WINE_BRANCH" = "staging-tkg" ]; then
+    if [ "$WINE_BRANCH" = "staging" ]; then
+    echo "Applying esync patch"
     patch -d wine -Np1 < "${scriptdir}"/esync.patch && \
+    echo "Applying address space patch"
     patch -d wine -Np1 < "${scriptdir}"/termux-wine-fix-staging.patch && \
+    echo "Applying path change patch"
     if git -C "${BUILD_DIR}/wine" log | grep -q 4e04b2d5282e4ef769176c94b4b38b5fba006a06; then
     patch -d wine -Np1 < "${scriptdir}"/pathfix-wine9.5.patch
     else
@@ -394,9 +400,12 @@ if [ "$TERMUX_GLIBC" = "true" ]; then
         exit 1
     }
     clear
-    else
+    elif [ "$WINE_BRANCH" = "vanilla" ]; then
+    echo "Applying esync patch"
     patch -d wine -Np1 < "${scriptdir}"/esync.patch && \
+    echo "Applying address space patch"
     patch -d wine -Np1 < "${scriptdir}"/termux-wine-fix.patch && \
+    echo "Applying path change patch"
     if git -C "${BUILD_DIR}/wine" log | grep -q 4e04b2d5282e4ef769176c94b4b38b5fba006a06; then
     patch -d wine -Np1 < "${scriptdir}"/pathfix-wine9.5.patch
     else
@@ -406,6 +415,19 @@ if [ "$TERMUX_GLIBC" = "true" ]; then
         exit 1
     }
     clear
+    elif [ "$WINE_BRANCH" = "staging-tkg" ]; then
+    echo "Applying esync patch"
+    patch -d wine -Np1 < "${scriptdir}"/esync.patch && \
+    echo "Applying address space patch"
+    patch -d wine -Np1 < "${scriptdir}"/termux-wine-fix-staging.patch && \
+    echo "Applying path change patch"
+    ## This needs an additional check since this patch will not work on
+    ## Wine 9.4 and lower due to differences in Wine source code.
+    patch -d wine -Np1 < "${scriptdir}"/pathfix-wine9.5.patch || {
+        echo "Error: Failed to apply one or more patches."
+        exit 1
+    }
+    clear 
 fi
 fi
 
