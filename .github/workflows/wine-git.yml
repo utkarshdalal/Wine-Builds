@@ -25,11 +25,13 @@ jobs:
           sudo apt install debootstrap perl git wget xz-utils bubblewrap autoconf
           sudo tar -C /opt -xpf /opt/Bootstraps/bootstraps.tar.xz
           chmod +x build_wine.sh
+          export TERMUX_GLIBC="false"
+          export TERMUX_PROOT="true"
           export WINE_VERSION="9.4"
           WINE_BRANCH=vanilla ./build_wine.sh
           WINE_BRANCH=staging ./build_wine.sh
           sha256sum *.tar.xz
       - uses: actions/upload-artifact@v3
         with:
-          name: Wine-Git
+          name: Wine-Git-Proot
           path: ./*.tar.xz
