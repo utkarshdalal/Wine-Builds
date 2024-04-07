@@ -403,6 +403,7 @@ if [ "$TERMUX_GLIBC" = "true" ]; then
     elif [ "$WINE_BRANCH" = "vanilla" ]; then
     echo "Applying esync patch"
     patch -d wine -Np1 < "${scriptdir}"/esync.patch && \
+    patch -d wine -Np1 < "${scriptdir}"/wineserverdesktopthreading.patch && \
     echo "Applying address space patch"
     patch -d wine -Np1 < "${scriptdir}"/termux-wine-fix.patch && \
     echo "Applying path change patch"
@@ -447,14 +448,14 @@ if [ ! -d wine ]; then
 fi
 
 cd wine || exit 1
-if [ "$WINE_BRANCH" = "vanilla" ]; then
+#if [ "$WINE_BRANCH" = "vanilla" ]; then
 #git revert --no-commit 2bfe81e41f93ce75139e3a6a2d0b68eb2dcb8fa6
-git revert --no-commit 5d91ab65faf9ffab3e36619aedb870a6aa17410d || {
-        echo "Error: Failed to revert one or two patches. Stopping."
-        exit 1
-    }
-    clear
-fi
+#git revert --no-commit 5d91ab65faf9ffab3e36619aedb870a6aa17410d || {
+#        echo "Error: Failed to revert one or two patches. Stopping."
+#        exit 1
+#    }
+#    clear
+#fi
 dlls/winevulkan/make_vulkan
 tools/make_requests
 tools/make_specfiles
