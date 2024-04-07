@@ -1,4 +1,4 @@
-name: Wine-Git CI
+name: Wine-Git Proot CI
 
 on:
   schedule:
