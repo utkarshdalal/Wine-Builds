@@ -173,6 +173,14 @@ if [ "${EXPERIMENTAL_WOW64}" = "true" ]; then
    echo "Building Wine in experimental WoW64 mode"
 fi
 
+# Checks whether these two env variables are set to true and if they are -
+# compilation will stop.
+
+if [ "$TERMUX_PROOT" = "true" ] && [ "$TERMUX_GLIBC" = "true" ]; then
+   echo "Only TERMUX_PROOT or TERMUX_GLIBC can be set at the same time. Stopping..." 
+   exit 1
+fi
+
 sleep 3
 
 if ! command -v git 1>/dev/null; then
@@ -461,14 +469,14 @@ if [ ! -d wine ]; then
 fi
 
 cd wine || exit 1
-#if [ "$WINE_BRANCH" = "vanilla" ]; then
-#git revert --no-commit 2bfe81e41f93ce75139e3a6a2d0b68eb2dcb8fa6
+if [ "$WINE_BRANCH" = "vanilla" ]; then
+git revert --no-commit 2bfe81e41f93ce75139e3a6a2d0b68eb2dcb8fa6
 #git revert --no-commit 5d91ab65faf9ffab3e36619aedb870a6aa17410d || {
-#        echo "Error: Failed to revert one or two patches. Stopping."
-#        exit 1
-#    }
-#    clear
-#fi
+        echo "Error: Failed to revert one or two patches. Stopping."
+        exit 1
+    }
+    clear
+fi
 dlls/winevulkan/make_vulkan
 tools/make_requests
 tools/make_specfiles
