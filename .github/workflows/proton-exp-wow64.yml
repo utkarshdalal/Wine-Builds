@@ -25,6 +25,7 @@ jobs:
           sudo apt install debootstrap perl git wget xz-utils bubblewrap autoconf
           sudo tar -C /opt -xpf /opt/Bootstraps/bootstraps.tar.xz
           chmod +x build_wine.sh
+          export TERMUX_GLIBC="true"
           export EXPERIMENTAL_WOW64="true"
           WINE_BRANCH=proton PROTON_BRANCH=proton_9.0 ./build_wine.sh
           sha256sum *.tar.xz
