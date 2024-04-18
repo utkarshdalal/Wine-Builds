@@ -429,6 +429,19 @@ if [ "$TERMUX_GLIBC" = "true" ]; then
         exit 1
     }
     clear 
+    elif [ "$WINE_BRANCH" = "proton" ]; then
+    echo "Applying esync patch"
+    patch -d wine -Np1 < "${scriptdir}"/esync.patch && \
+    echo "Applying address space patch"
+    patch -d wine -Np1 < "${scriptdir}"/termux-wine-fix-staging.patch && \
+    echo "Applying path change patch"
+    ## Proton is based on Wine 9.0 stable release so some of the updates
+    ## for patches are not required.
+    patch -d wine -Np1 < "${scriptdir}"/pathfix.patch || {
+        echo "Error: Failed to apply one or more patches."
+        exit 1
+    }
+    clear 
 fi
 fi
 
