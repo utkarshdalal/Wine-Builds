@@ -470,8 +470,7 @@ fi
 
 cd wine || exit 1
 if [ "$WINE_BRANCH" = "vanilla" ]; then
-git revert --no-commit 2bfe81e41f93ce75139e3a6a2d0b68eb2dcb8fa6
-#git revert --no-commit 5d91ab65faf9ffab3e36619aedb870a6aa17410d || {
+git revert --no-commit 2bfe81e41f93ce75139e3a6a2d0b68eb2dcb8fa6 || {
         echo "Error: Failed to revert one or two patches. Stopping."
         exit 1
     }
