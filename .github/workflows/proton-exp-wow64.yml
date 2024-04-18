@@ -27,7 +27,7 @@ jobs:
           chmod +x build_wine.sh
           export TERMUX_GLIBC="true"
           export EXPERIMENTAL_WOW64="true"
-          WINE_BRANCH=proton PROTON_BRANCH=proton_9.0 ./build_wine.sh
+          WINE_BRANCH=proton PROTON_BRANCH=bleeding_edge ./build_wine.sh
           sha256sum *.tar.xz
       - uses: actions/upload-artifact@v3
         with:
