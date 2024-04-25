@@ -370,7 +370,7 @@ cd "${BUILD_DIR}" || exit 1
 fi
 
 if [ "$TERMUX_PROOT" = "true" ]; then
-    if [ "$WINE_BRANCH" = "staging" ] || [ "$WINE_BRANCH" = "staging-tkg" ]; then
+    if [ "$WINE_BRANCH" = "staging" ] || [ "$WINE_BRANCH" = "staging-tkg" ] || [ "$WINE_BRANCH"= "proton" ]; then
     echo "Applying address patch to proot/chroot Wine build..."
     patch -d wine -Np1 < "${scriptdir}"/address-space-proot.patch || {
         echo "Error: Failed to apply one or more patches."
