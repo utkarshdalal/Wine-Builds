@@ -1,4 +1,4 @@
-name: Proton Experimental CI
+name: Proton Experimental Proot WoW64 CI
 
 on:
   schedule:
@@ -24,10 +24,13 @@ jobs:
           sudo apt update
           sudo apt install debootstrap perl git wget xz-utils bubblewrap autoconf
           sudo tar -C /opt -xpf /opt/Bootstraps/bootstraps.tar.xz
+          export TERMUX_PROOT="true"
+          export TERMUX_GLIBC="false"
+          export EXPERIMENTAL_WOW64="true"
           chmod +x build_wine.sh
           WINE_BRANCH=proton PROTON_BRANCH=proton_9.0 ./build_wine.sh
           sha256sum *.tar.xz
       - uses: actions/upload-artifact@v3
         with:
-          name: Proton Experimental
+          name: Proton Experimental Proot WoW64
           path: ./*.tar.xz
