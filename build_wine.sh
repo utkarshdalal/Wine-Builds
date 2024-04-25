@@ -46,7 +46,7 @@ export STAGING_VERSION="${STAGING_VERSION:-}"
 
 #######################################################################
 # If you're building specifically for Termux glibc, set this to true.
-export TERMUX_GLIBC="${TERMUX_GLIBC:-true}"
+export TERMUX_GLIBC="${TERMUX_GLIBC:-false}"
 
 # If you want to build Wine for proot/chroot, set this to true.
 # It will incorporate address space adjustment which might improve
@@ -370,7 +370,7 @@ cd "${BUILD_DIR}" || exit 1
 fi
 
 if [ "$TERMUX_PROOT" = "true" ]; then
-    if [ "$WINE_BRANCH" = "staging" ] || [ "$WINE_BRANCH" = "staging-tkg" ] || [ "$WINE_BRANCH"= "proton" ]; then
+    if [ "$WINE_BRANCH" = "staging" ] || [ "$WINE_BRANCH" = "staging-tkg" ] || [ "$WINE_BRANCH" = "proton" ]; then
     echo "Applying address patch to proot/chroot Wine build..."
     patch -d wine -Np1 < "${scriptdir}"/address-space-proot.patch || {
         echo "Error: Failed to apply one or more patches."
