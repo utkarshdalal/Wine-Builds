@@ -114,9 +114,11 @@ wget -O spirv-headers.tar.gz https://github.com/KhronosGroup/SPIRV-Headers/archi
 wget -O libpcap.tar.gz https://www.tcpdump.org/release/libpcap-${libpcap_version}.tar.gz
 wget -O libxkbcommon.tar.xz https://xkbcommon.org/download/libxkbcommon-${libxkbcommon_version}.tar.xz
 if [ -d /usr/lib/x86_64-linux-gnu ]; then wget -O wine.deb https://dl.winehq.org/wine-builds/ubuntu/dists/jammy/main/binary-amd64/wine-stable_9.0.0.0~jammy-1_amd64.deb; fi
-wget -O vkd3d.tar.xz https://dl.winehq.org/vkd3d/source/vkd3d-1.11.tar.xz
-mkdir vkd3d 
-tar xf vkd3d.tar.xz ./vkd3d
+# VkD3D download script. Needs automation to be implemented
+wget -O https://dl.winehq.org/vkd3d/source/vkd3d-1.11.tar.xz 
+tar xf vkd3d-1.11.tar.xz
+mv vkd3d-1.11 vkd3d
+#
 tar xf sdl.tar.gz
 tar xf faudio.tar.gz
 tar xf vulkan-loader.tar.gz
