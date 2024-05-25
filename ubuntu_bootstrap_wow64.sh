@@ -157,7 +157,6 @@ EOF
 mkdir -p "${MAINDIR}"
 
 debootstrap --arch amd64 $CHROOT_DISTRO "${CHROOT_X64}" $CHROOT_MIRROR
-fi
 
 create_build_scripts
 prepare_chroot 64
