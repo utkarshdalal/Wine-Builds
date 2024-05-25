@@ -91,7 +91,7 @@ export DO_NOT_COMPILE="false"
 # Make sure that ccache is installed before enabling this.
 export USE_CCACHE="false"
 
-export WINE_BUILD_OPTIONS="--enable-archs=i386,x86_64 --disable-winemenubuilder --disable-win16 --enable-win64 --disable-tests --without-alsa --without-capi --without-coreaudio --without-cups --without-dbus --without-fontconfig --without-gphoto --without-gssapi --without-krb5 --without-netapi --without-osmesa --without-oss --without-pcap --without-pcsclite --without-sane --without-udev --without-unwind --without-usb --without-v4l2 --without-wayland --without-xinerama --without-xxf86vm"
+export WINE_BUILD_OPTIONS="--enable-archs=i386,x86_64 --disable-winemenubuilder --disable-win16 --enable-win64 --disable-tests --without-alsa --without-capi --without-coreaudio --without-cups --without-dbus --without-gphoto --without-gssapi --without-krb5 --without-netapi --without-osmesa --without-oss --without-pcap --without-pcsclite --without-sane --without-udev --without-unwind --without-usb --without-v4l2 --without-wayland --without-xinerama --without-xxf86vm"
 
 # A temporary directory where the Wine source code will be stored.
 # Do not set this variable to an existing non-empty directory!
@@ -113,8 +113,8 @@ if [ "${EXPERIMENTAL_WOW64}" = "true" ]; then
    export CROSSCC_X64="x86_64-w64-mingw32-gcc"
    export CROSSCXX_X64="x86_64-w64-mingw32-g++"
 
-   export CFLAGS_X64="-march=x86-64 -msse3 -mfpmath=sse -O3 -ftree-vectorize -pipe"
-   export LDFLAGS="-Wl,-O1,--sort-common,--as-needed"
+   export CFLAGS_X64="-march=core2 -msse3 -mfpmath=sse -O2 -ftree-vectorize -pipe"
+   export LDFLAGS="-Wl,-O2,--sort-common,--as-needed"
    
    export CROSSCFLAGS_X64="${CFLAGS_X64}"
    export CROSSLDFLAGS="${LDFLAGS}"
