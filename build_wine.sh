@@ -562,7 +562,7 @@ else
 fi
 
 if [ "${EXPERIMENTAL_WOW64}" = "true" ]; then
-BWRAP64="build_with_bwrap 64"
+BWRAP64="build_with_bwrap"
 else
 BWRAP64="build_with_bwrap 64"
 BWRAP32="build_with_bwrap 32"
