@@ -16,9 +16,8 @@ jobs:
         run: |
           sudo apt update
           sudo apt install debootstrap perl
-          export EXPERIMENTAL_WOW64="true"
-          chmod +x create_ubuntu_bootstraps.sh
-          sudo ./create_ubuntu_bootstraps.sh
+          chmod +x ubuntu_bootstrap_wow64.sh
+          sudo ./ubuntu_bootstrap_wow64.sh
           cd /opt
           sudo tar -I "xz -T0 -9" -cpf bootstraps_wow64.tar.xz chroots
           sha256sum *.tar.xz
