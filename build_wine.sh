@@ -114,7 +114,7 @@ if [ "${EXPERIMENTAL_WOW64}" = "true" ]; then
    export CROSSCXX_X64="x86_64-w64-mingw32-g++"
 
    export CFLAGS_X64="-march=core2 -msse3 -mfpmath=sse -O2 -ftree-vectorize -pipe"
-   export LDFLAGS="-Wl,-O2,--sort-common,--as-needed"
+   export LDFLAGS="-Wl,-O1,--sort-common,--as-needed"
    
    export CROSSCFLAGS_X64="${CFLAGS_X64}"
    export CROSSLDFLAGS="${LDFLAGS}"
