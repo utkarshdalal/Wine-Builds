@@ -91,14 +91,65 @@ export DO_NOT_COMPILE="false"
 # Make sure that ccache is installed before enabling this.
 export USE_CCACHE="false"
 
-export WINE_BUILD_OPTIONS="--without-ldap --without-oss --disable-winemenubuilder --disable-win16 --disable-tests"
+export WINE_BUILD_OPTIONS="--enable-archs=i386,x86_64 --disable-winemenubuilder --disable-win16 --enable-win64 --disable-tests --without-alsa --without-capi --without-coreaudio --without-cups --without-dbus --without-fontconfig --without-gphoto --without-gssapi --without-krb5 --without-netapi --without-osmesa --without-oss --without-pcap --without-pcsclite --without-sane --without-udev --without-unwind --without-usb --without-v4l2 --without-wayland --without-xinerama --without-xxf86vm"
 
 # A temporary directory where the Wine source code will be stored.
 # Do not set this variable to an existing non-empty directory!
 # This directory is removed and recreated on each script run.
 export BUILD_DIR="${HOME}"/build_wine
 
-# Change these paths to where your Ubuntu bootstraps reside
+# Implement a new WoW64 specific check which will change the way Wine is built.
+# New WoW64 builds will use a different bootstrap which require different
+# variables and they are not compatible with old WoW64 build mode.
+if [ "${EXPERIMENTAL_WOW64}" = "true" ]; then
+
+   export BOOTSTRAP_X64=/opt/chroots/noble64_chroot
+
+   export scriptdir="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
+
+   export CC="gcc-14"
+   export CXX="g++-14"
+   
+   export CROSSCC_X64="x86_64-w64-mingw32-gcc"
+   export CROSSCXX_X64="x86_64-w64-mingw32-g++"
+
+   export CFLAGS_X64="-march=x86-64 -msse3 -mfpmath=sse -O3 -ftree-vectorize -pipe"
+   export LDFLAGS="-Wl,-O1,--sort-common,--as-needed"
+   
+   export CROSSCFLAGS_X64="${CFLAGS_X64}"
+   export CROSSLDFLAGS="${LDFLAGS}"
+
+   if [ "$USE_CCACHE" = "true" ]; then
+	export CC="ccache ${CC}"
+	export CXX="ccache ${CXX}"
+ 
+	export x86_64_CC="ccache ${CROSSCC_X64}"
+ 
+	export CROSSCC_X64="ccache ${CROSSCC_X64}"
+	export CROSSCXX_X64="ccache ${CROSSCXX_X64}"
+
+	if [ -z "${XDG_CACHE_HOME}" ]; then
+		export XDG_CACHE_HOME="${HOME}"/.cache
+	fi
+
+	mkdir -p "${XDG_CACHE_HOME}"/ccache
+	mkdir -p "${HOME}"/.ccache
+   fi
+
+   build_with_bwrap () {
+		BOOTSTRAP_PATH="${BOOTSTRAP_X64}"
+
+    bwrap --ro-bind "${BOOTSTRAP_PATH}" / --dev /dev --ro-bind /sys /sys \
+		  --proc /proc --tmpfs /tmp --tmpfs /home --tmpfs /run --tmpfs /var \
+		  --tmpfs /mnt --tmpfs /media --bind "${BUILD_DIR}" "${BUILD_DIR}" \
+		  --bind-try "${XDG_CACHE_HOME}"/ccache "${XDG_CACHE_HOME}"/ccache \
+		  --bind-try "${HOME}"/.ccache "${HOME}"/.ccache \
+		  --setenv PATH "/bin:/sbin:/usr/bin:/usr/sbin" \
+			"$@"
+}
+
+else
+
 export BOOTSTRAP_X64=/opt/chroots/bionic64_chroot
 export BOOTSTRAP_X32=/opt/chroots/bionic32_chroot
 
@@ -159,6 +210,7 @@ build_with_bwrap () {
 		  --setenv PATH "/bin:/sbin:/usr/bin:/usr/sbin" \
 			"$@"
 }
+fi
 
 # Prints out which environment you are building Wine for.
 # Easier to debug script errors.
