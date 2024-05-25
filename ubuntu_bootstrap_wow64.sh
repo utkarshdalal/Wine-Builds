@@ -101,8 +101,8 @@ apt-get -y install python3-pip libxcb-xkb-dev
 apt-get -y purge libvulkan-dev libvulkan1 libsdl2-dev libsdl2-2.0-0 libpcap0.8-dev libpcap0.8 --purge --autoremove
 apt-get -y clean
 apt-get -y autoclean
-pip3 install meson
-pip3 install ninja
+apt install meson
+apt install ninja-build
 export PATH="/usr/local/bin:${PATH}"
 mkdir /opt/build_libs
 cd /opt/build_libs
