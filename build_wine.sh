@@ -547,14 +547,26 @@ if ! command -v bwrap 1>/dev/null; then
 	exit 1
 fi
 
-if [ ! -d "${BOOTSTRAP_X64}" ] || [ ! -d "${BOOTSTRAP_X32}" ]; then
-	clear
-	echo "Bootstraps are required for compilation!"
-	exit 1
+if [ "${EXPERIMENTAL_WOW64}" = "true" ]; then
+    if [ ! -d "${BOOTSTRAP_X64}" ]; then
+        clear
+        echo "Bootstraps are required for compilation!"
+        exit 1
+    fi
+else    
+    if [ ! -d "${BOOTSTRAP_X64}" ] || [ ! -d "${BOOTSTRAP_X32}" ]; then
+        clear
+        echo "Bootstraps are required for compilation!"
+        exit 1
+    fi
 fi
 
+if [ "${EXPERIMENTAL_WOW64}" = "true" ]; then
+BWRAP64="build_with_bwrap 64"
+else
 BWRAP64="build_with_bwrap 64"
 BWRAP32="build_with_bwrap 32"
+fi
 
 if [ "${EXPERIMENTAL_WOW64}" = "true" ]; then
 
