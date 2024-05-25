@@ -139,10 +139,10 @@ cmake ../Vulkan-Loader-${vulkan_loader_version}
 make -j$(nproc)
 make install
 cd ../ && rm -r build && mkdir build && cd build
-cmake ../SPIRV-Headers-${spirv_headers_version} && make -j$(nproc) && make install
+cmake ../SPIRV-Headers-vulkan-sdk-1.3.283.0 && make -j$(nproc) && make install
 cd ../ && dpkg -x wine.deb .
 cp opt/wine-stable/bin/widl /usr/bin
-cd vkd3d && ./autogen.sh
+cd vkd3d
 cd ../ && rm -r build && mkdir build && cd build
 ../vkd3d/configure && make -j$(nproc) && make install
 cd ../ && rm -r build && mkdir build && cd build
