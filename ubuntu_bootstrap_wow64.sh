@@ -98,7 +98,7 @@ apt-get -y install libxpresent-dev libjxr-dev libusb-1.0-0-dev libgcrypt20-dev l
 apt-get -y install libjpeg62-dev samba-dev
 apt-get -y install libpcsclite-dev libcups2-dev
 apt-get -y install python3-pip libxcb-xkb-dev
-apt-get -y install meson ninja-build
+apt-get -y install meson ninja-build libxml2 libxml2-dev libxkbcommon-dev libxkbcommon0 xkb-data
 apt-get -y purge libvulkan-dev libvulkan1 libsdl2-dev libsdl2-2.0-0 libpcap0.8-dev libpcap0.8 --purge --autoremove
 apt-get -y clean
 apt-get -y autoclean
@@ -146,10 +146,10 @@ cd ../ && rm -r build && mkdir build && cd build
 ../vkd3d/configure && make -j$(nproc) && make install
 cd ../ && rm -r build && mkdir build && cd build
 ../libpcap-${libpcap_version}/configure && make -j$(nproc) install
-cd ../libxkbcommon-${libxkbcommon_version}
-meson setup build -Denable-docs=false
-meson compile -C build
-meson install -C build
+#cd ../libxkbcommon-${libxkbcommon_version}
+#meson setup build -Denable-docs=false
+#meson compile -C build
+#meson install -C build
 cd /opt && rm -r /opt/build_libs
 EOF
 
