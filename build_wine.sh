@@ -463,7 +463,6 @@ if [ "$TERMUX_GLIBC" = "true" ]; then
     elif [ "$WINE_BRANCH" = "vanilla" ]; then
     echo "Applying esync patch"
     patch -d wine -Np1 < "${scriptdir}"/esync.patch && \
-    patch -d wine -Np1 < "${scriptdir}"/wineserverdesktopthreading.patch && \
     echo "Applying address space patch"
     patch -d wine -Np1 < "${scriptdir}"/termux-wine-fix.patch && \
     echo "Applying path change patch"
