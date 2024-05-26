@@ -113,7 +113,7 @@ if [ "${EXPERIMENTAL_WOW64}" = "true" ]; then
    export CROSSCC_X64="x86_64-w64-mingw32-gcc"
    export CROSSCXX_X64="x86_64-w64-mingw32-g++"
 
-   export CFLAGS_X64="-march=x86-64 -msse3 -mfpmath=sse -O2 -ftree-vectorize -pipe"
+   export CFLAGS_X64="-march=x86-64 -msse3 -mfpmath=sse -O3 -ftree-vectorize -pipe"
    export LDFLAGS="-Wl,-O1,--sort-common,--as-needed"
    
    export CROSSCFLAGS_X64="${CFLAGS_X64}"
@@ -466,12 +466,7 @@ if [ "$TERMUX_GLIBC" = "true" ]; then
     echo "Applying address space patch"
     patch -d wine -Np1 < "${scriptdir}"/termux-wine-fix.patch && \
     echo "Applying path change patch"
-    #if git -C "${BUILD_DIR}/wine" log | grep -q 4e04b2d5282e4ef769176c94b4b38b5fba006a06; then
-    #patch -d wine -Np1 < "${scriptdir}"/pathfix-wine9.5.patch
-    #else
-    patch -d wine -Np1 < "${scriptdir}"/pathfix.patch
-    #fi 
-    || {
+    patch -d wine -Np1 < "${scriptdir}"/pathfix.patch || {
         echo "Error: Failed to apply one or more patches."
         exit 1
     }
