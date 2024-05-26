@@ -27,7 +27,7 @@ jobs:
           chmod +x build_wine.sh
           export TERMUX_GLIBC="true"
           export EXPERIMENTAL_WOW64="true"
-          export WINE_VERSION="git"
+          export WINE_VERSION="9.4"
           WINE_BRANCH=vanilla ./build_wine.sh
           #WINE_BRANCH=staging ./build_wine.sh
           sha256sum *.tar.xz
