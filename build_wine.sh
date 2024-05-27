@@ -107,13 +107,13 @@ if [ "${EXPERIMENTAL_WOW64}" = "true" ]; then
 
    export scriptdir="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 
-   export CC="gcc-13"
-   export CXX="g++-13"
+   export CC="gcc-14"
+   export CXX="g++-14"
    
    export CROSSCC_X64="x86_64-w64-mingw32-gcc"
    export CROSSCXX_X64="x86_64-w64-mingw32-g++"
 
-   export CFLAGS_X64="-march=x86-64 -msse3 -mfpmath=sse -O2 -ftree-vectorize -pipe"
+   export CFLAGS_X64="-march=core2 -mtune=generic -mno-avx -mno-avx2 -mno-avx512f -msse3 -mfpmath=sse -O2 -ftree-vectorize -pipe"
    export LDFLAGS="-Wl,-O1,--sort-common,--as-needed"
    
    export CROSSCFLAGS_X64="${CFLAGS_X64}"
