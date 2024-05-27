@@ -107,8 +107,8 @@ if [ "${EXPERIMENTAL_WOW64}" = "true" ]; then
 
    export scriptdir="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 
-   export CC="gcc-14"
-   export CXX="g++-14"
+   export CC="gcc-13"
+   export CXX="g++-13"
    
    export CROSSCC_X64="x86_64-w64-mingw32-gcc"
    export CROSSCXX_X64="x86_64-w64-mingw32-g++"
