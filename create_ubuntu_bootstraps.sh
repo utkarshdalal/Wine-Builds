@@ -8,10 +8,6 @@
 ## About 5.5 GB of free space is required
 ## And additional 2.5 GB is required for Wine compilation
 
-# If you are planning to only build WoW64 Wine, you can switch to newer Ubuntu release.
-# Keep in mind, that this is only for 64 bit builds. Support for i386 Ubuntu has ended.
-export EXPERIMENTAL_WOW64="true"
-
 if [ "$EUID" != 0 ]; then
 	echo "This script requires root rights!"
 	exit 1
@@ -24,21 +20,14 @@ fi
 
 # Keep in mind that although you can choose any version of Ubuntu/Debian
 # here, but this script has only been tested with Ubuntu 18.04 Bionic
-if [ "${EXPERIMENTAL_WOW64}" = "true" ]; then
-export CHROOT_DISTRO="jammy"
-else
 export CHROOT_DISTRO="bionic"
-fi
 
 export CHROOT_MIRROR="https://ftp.uni-stuttgart.de/ubuntu/"
 
 # Set your preferred path for storing chroots
 # Also don't forget to change the path to the chroots in the build_wine.sh
 # script, if you are going to use it
-export MAINDIR=/opt/chroots
-if [ "{$EXPERIMENTAL_WOW64}" = "true" ]; then
-export CHROOT_X64="${MAINDIR}"/${CHROOT_DISTRO}64_chroot
-else
+export MAINDIR=/opt/chroot/
 export CHROOT_X32="${MAINDIR}"/${CHROOT_DISTRO}32_chroot
 export CHROOT_X64="${MAINDIR}"/${CHROOT_DISTRO}64_chroot
 fi
@@ -110,7 +99,7 @@ add-apt-repository -y ppa:ubuntu-toolchain-r/test
 add-apt-repository -y ppa:cybermax-dexter/mingw-w64-backport
 apt-get update
 apt-get -y build-dep wine-development libsdl2 libvulkan1
-apt-get -y install ccache gcc-13 g++-13 wget git gcc-mingw-w64 g++-mingw-w64
+apt-get -y install ccache gcc-9 g++-9 wget git gcc-mingw-w64 g++-mingw-w64
 apt-get -y install libxpresent-dev libjxr-dev libusb-1.0-0-dev libgcrypt20-dev libpulse-dev libudev-dev libsane-dev libv4l-dev libkrb5-dev libgphoto2-dev liblcms2-dev libcapi20-dev
 apt-get -y install libjpeg62-dev samba-dev
 apt-get -y install libpcsclite-dev libcups2-dev
@@ -175,20 +164,12 @@ EOF
 
 mkdir -p "${MAINDIR}"
 
-if [ "${EXPERIMENTAL_WOW64}" = "true" ]; then
-debootstrap --arch amd64 $CHROOT_DISTRO "${CHROOT_X64}" $CHROOT_MIRROR
-else
 debootstrap --arch amd64 $CHROOT_DISTRO "${CHROOT_X64}" $CHROOT_MIRROR
 debootstrap --arch i386 $CHROOT_DISTRO "${CHROOT_X32}" $CHROOT_MIRROR
-fi
 
 create_build_scripts
-if [ "{$EXPERIMENTAL_WOW64}" = "true" ]; then
-prepare_chroot 64
-else
 prepare_chroot 32
 prepare_chroot 64
-fi
 
 rm "${CHROOT_X64}"/opt/prepare_chroot.sh
 rm "${CHROOT_X32}"/opt/prepare_chroot.sh
