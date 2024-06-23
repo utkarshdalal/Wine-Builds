@@ -504,6 +504,13 @@ if [ "$TERMUX_GLIBC" = "true" ]; then
 fi
 fi
 
+# Highly experimental patch for loosening exception handling (thanks to BrunoSX for the idea)
+patch -d wine -Np1 < "${scriptdir}"/looserexceptionhandling.patch || {
+        echo "Error: Failed to apply one or more patches."
+        exit 1
+    }
+    clear 
+
 #if [ "$WINE_BRANCH" = "vanilla" ] || [ "$WINE_BRANCH" = "staging" ]; then
 #    patch -d wine -Np1 < "${scriptdir}"/wine-cpu-topology.patch || {
 #        echo "Error: failed to apply CPU topology patch..."
