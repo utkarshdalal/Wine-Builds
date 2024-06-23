@@ -505,11 +505,29 @@ fi
 fi
 
 # Highly experimental patch for loosening exception handling (thanks to BrunoSX for the idea)
+echo "Loosening exception handling... (thanks BrunoSX)"
 patch -d wine -Np1 < "${scriptdir}"/looserexceptionhandling.patch || {
         echo "Error: Failed to apply one or more patches."
         exit 1
     }
     clear 
+    
+# NDIS patch for fixing crappy Android's SELinux limitations.
+if [ "$TERMUX_GLIBC" = "true" ]; then
+echo "Circumventing crappy SELinux's limitations... (Thanks BrunoSX)"
+patch -d wine -Np1 < "${scriptdir}"/ndis.patch || {
+        echo "Error: Failed to apply one or more patches."
+        exit 1
+    }
+    clear
+else
+echo "Circumventing crappy SELinux's limitations... (Thanks BrunoSX)"
+patch -d wine -Np1 < "${scriptdir}"/ndis-proot.patch || {
+        echo "Error: Failed to apply one or more patches."
+        exit 1
+    }
+    clear
+fi
 
 #if [ "$WINE_BRANCH" = "vanilla" ] || [ "$WINE_BRANCH" = "staging" ]; then
 #    patch -d wine -Np1 < "${scriptdir}"/wine-cpu-topology.patch || {
