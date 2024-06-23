@@ -89,7 +89,7 @@ export DO_NOT_COMPILE="false"
 # By default it has a 5 GB limit for its cache size.
 #
 # Make sure that ccache is installed before enabling this.
-export USE_CCACHE="false"
+export USE_CCACHE="${USE_CCACHE:-false}"
 
 export WINE_BUILD_OPTIONS="--disable-winemenubuilder --disable-win16 --enable-win64 --disable-tests --without-capi --without-coreaudio --without-cups --without-dbus --without-gphoto --without-gssapi --without-krb5 --without-netapi --without-osmesa --without-oss --without-pcap --without-pcsclite --without-sane --without-udev --without-unwind --without-usb --without-v4l2 --without-wayland --without-xinerama --without-xxf86vm"
 
