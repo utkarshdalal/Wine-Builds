@@ -30,7 +30,6 @@ export CHROOT_MIRROR="https://ftp.uni-stuttgart.de/ubuntu/"
 export MAINDIR=/opt/chroot/
 export CHROOT_X32="${MAINDIR}"/${CHROOT_DISTRO}32_chroot
 export CHROOT_X64="${MAINDIR}"/${CHROOT_DISTRO}64_chroot
-fi
 
 prepare_chroot () {
 	if [ "$1" = "32" ]; then
@@ -99,7 +98,7 @@ add-apt-repository -y ppa:ubuntu-toolchain-r/test
 add-apt-repository -y ppa:cybermax-dexter/mingw-w64-backport
 apt-get update
 apt-get -y build-dep wine-development libsdl2 libvulkan1
-apt-get -y install ccache gcc-9 g++-9 wget git gcc-mingw-w64 g++-mingw-w64
+apt-get -y install ccache cmake perl bison gcc-9 g++-9 wget git gcc-mingw-w64 g++-mingw-w64
 apt-get -y install libxpresent-dev libjxr-dev libusb-1.0-0-dev libgcrypt20-dev libpulse-dev libudev-dev libsane-dev libv4l-dev libkrb5-dev libgphoto2-dev liblcms2-dev libcapi20-dev
 apt-get -y install libjpeg62-dev samba-dev
 apt-get -y install libpcsclite-dev libcups2-dev
