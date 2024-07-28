@@ -563,7 +563,9 @@ fi
 if [ "$TERMUX_GLIBC" = "true" ]; then
 echo "Applying additional address space patch... (credits to Bylaws)"
 wget -O address-space.patch https://github.com/bylaws/wine/commit/c12890cafb580764c076e4231636cafaf6e35089.patch
-patch -p1 < address-space.patch || {
+patch -p1 < address-space.patch
+wget -O address-space1.patch https://github.com/bylaws/wine/commit/e0f544db0732f79ed0d03b366474477614474740.patch
+patch -p1 < address-space1.patch || {
         echo "This patch did not apply. Stopping..."
 	exit 1
     }
