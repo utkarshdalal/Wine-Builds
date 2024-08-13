@@ -113,8 +113,8 @@ if [ "${EXPERIMENTAL_WOW64}" = "true" ]; then
    export CROSSCC_X64="x86_64-w64-mingw32-gcc"
    export CROSSCXX_X64="x86_64-w64-mingw32-g++"
 
-   export CFLAGS_X64="-march=x86-64 -O2 -ftree-vectorize -fstack-protector-strong -fno-plt -fstack-clash-protection"
-   export LDFLAGS="-Wl,-O1,--sort-common,--as-needed -fstack-protector-strong -fno-plt"
+   #export CFLAGS_X64="-march=x86-64 -O2 -ftree-vectorize -fstack-protector-strong -fno-plt -fstack-clash-protection"
+   #export LDFLAGS="-Wl,-O1,--sort-common,--as-needed -fstack-protector-strong -fno-plt"
    
    export CROSSCFLAGS_X64="${CFLAGS_X64}"
    export CROSSLDFLAGS="${LDFLAGS}"
