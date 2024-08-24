@@ -113,7 +113,7 @@ if [ "${EXPERIMENTAL_WOW64}" = "true" ]; then
    export CROSSCC_X64="x86_64-w64-mingw32-gcc"
    export CROSSCXX_X64="x86_64-w64-mingw32-g++"
 
-   export CFLAGS_X64="-march=x86-64 -msse3 -flto -mfpmath=sse -O3 -ftree-vectorize"
+   export CFLAGS_X64="-march=x86-64 -msse3 -mfpmath=sse -O3 -ftree-vectorize"
    export LDFLAGS="-Wl,-O1,--sort-common,--as-needed"
    
    export CROSSCFLAGS_X64="${CFLAGS_X64}"
@@ -623,7 +623,7 @@ export CROSSCXXFLAGS="${CROSSCFLAGS_X64}"
 mkdir "${BUILD_DIR}"/build64
 cd "${BUILD_DIR}"/build64 || exit
 ${BWRAP64} "${BUILD_DIR}"/wine/configure --enable-archs=i386,x86_64 ${WINE_BUILD_OPTIONS} --prefix "${BUILD_DIR}"/wine-"${BUILD_NAME}"-amd64
-${BWRAP64} make -j$(nproc)
+${BWRAP64} make -j8
 ${BWRAP64} make install
 
 else
@@ -638,7 +638,7 @@ export CROSSCXXFLAGS="${CROSSCFLAGS_X64}"
 mkdir "${BUILD_DIR}"/build64
 cd "${BUILD_DIR}"/build64 || exit
 ${BWRAP64} "${BUILD_DIR}"/wine/configure --enable-win64 ${WINE_BUILD_OPTIONS} --prefix "${BUILD_DIR}"/wine-"${BUILD_NAME}"-amd64
-${BWRAP64} make -j$(nproc)
+${BWRAP64} make -j8
 ${BWRAP64} make install
 
 export CROSSCC="${CROSSCC_X32}"
@@ -662,7 +662,7 @@ export CROSSCXXFLAGS="${CROSSCFLAGS_X64}"
 mkdir "${BUILD_DIR}"/build32
 cd "${BUILD_DIR}"/build32 || exit
 PKG_CONFIG_LIBDIR=/usr/lib/i386-linux-gnu/pkgconfig:/usr/local/lib/pkgconfig:/usr/local/lib/i386-linux-gnu/pkgconfig ${BWRAP32} "${BUILD_DIR}"/wine/configure --with-wine64="${BUILD_DIR}"/build64 --with-wine-tools="${BUILD_DIR}"/build32-tools ${WINE_BUILD_OPTIONS} --prefix "${BUILD_DIR}"/wine-${BUILD_NAME}-amd64
-${BWRAP32} make -j$(nproc)
+${BWRAP32} make -j8
 ${BWRAP32} make install
 
 fi
