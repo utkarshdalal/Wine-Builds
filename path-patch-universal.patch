@@ -1,16 +1,23 @@
 diff --git a/dlls/crypt32/unixlib.c b/dlls/crypt32/unixlib.c
-index 5a25544..ecfa3b9 100644
+index 5a25544..7dd8847 100644
 --- a/dlls/crypt32/unixlib.c
 +++ b/dlls/crypt32/unixlib.c
-@@ -621,6 +621,8 @@ static const char * const CRYPT_knownLocations[] = {
+@@ -621,8 +621,15 @@ static const char * const CRYPT_knownLocations[] = {
   "/usr/local/share/certs/",
   "/etc/sfw/openssl/certs",
   "/etc/security/cacerts",  /* Android */
-+ getenv("WINE_CA_CERT_PATH") ? getenv("WINE_CA_CERT_PATH") :
 + "/data/data/com.termux/files/usr/glibc/etc/ca-certificates/cacert.pem"
++ NULL
  };
  
++static const char* get_ca_cert_path(void) {
++    const char *env_path = getenv("WINE_CA_CERT_PATH");
++    return env_path ? env_path : CRYPT_knownLocations[3]; /* Use hardcoded path if env var not set */
++}
++
  static void load_root_certs(void)
+ {
+     unsigned int i;
 diff --git a/dlls/ntdll/unix/server.c b/dlls/ntdll/unix/server.c
 index f3ffd99..e6926b6 100644
 --- a/dlls/ntdll/unix/server.c
