@@ -452,7 +452,7 @@ if [ "$TERMUX_GLIBC" = "true" ]; then
     patch -d wine -Np1 < "${scriptdir}"/termux-wine-fix-staging.patch && \
     echo "Applying path change patch"
     if git -C "${BUILD_DIR}/wine" log | grep -q 4e04b2d5282e4ef769176c94b4b38b5fba006a06; then
-    patch -d wine -Np1 < "${scriptdir}"/pathfix-wine9.5.patch
+    patch -d wine -Np1 < "${scriptdir}"/path-patch-universal.patch
     else
     patch -d wine -Np1 < "${scriptdir}"/pathfix.patch
     fi || {
