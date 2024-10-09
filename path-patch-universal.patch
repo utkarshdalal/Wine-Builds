@@ -1,23 +1,41 @@
 diff --git a/dlls/crypt32/unixlib.c b/dlls/crypt32/unixlib.c
-index 5a25544..7dd8847 100644
+index 5a25544..27d16cc 100644
 --- a/dlls/crypt32/unixlib.c
 +++ b/dlls/crypt32/unixlib.c
-@@ -621,8 +621,15 @@ static const char * const CRYPT_knownLocations[] = {
+@@ -621,11 +621,20 @@ static const char * const CRYPT_knownLocations[] = {
   "/usr/local/share/certs/",
   "/etc/sfw/openssl/certs",
   "/etc/security/cacerts",  /* Android */
-+ "/data/data/com.termux/files/usr/glibc/etc/ca-certificates/cacert.pem"
++ "/data/data/com.termux/files/usr/glibc/etc/ca-certificates/cacert.pem",
 + NULL
  };
  
 +static const char* get_ca_cert_path(void) {
 +    const char *env_path = getenv("WINE_CA_CERT_PATH");
-+    return env_path ? env_path : CRYPT_knownLocations[3]; /* Use hardcoded path if env var not set */
++    return env_path ? env_path : CRYPT_knownLocations[3];
 +}
 +
  static void load_root_certs(void)
  {
      unsigned int i;
++    const char *cert_path = get_ca_cert_path();
++    if (!import_certs_from_path(cert_path, TRUE) && list_empty(&root_cert_list)) {
+ 
+ #ifdef __APPLE__
+     const SecTrustSettingsDomain domains[] = {
+@@ -658,10 +667,12 @@ static void load_root_certs(void)
+             CFRelease(certs);
+         }
+     }
++
+ #endif
+ 
+     for (i = 0; i < ARRAY_SIZE(CRYPT_knownLocations) && list_empty(&root_cert_list); i++)
+         import_certs_from_path( CRYPT_knownLocations[i], TRUE );
++    }
+ }
+ 
+ static NTSTATUS enum_root_certs( void *args )
 diff --git a/dlls/ntdll/unix/server.c b/dlls/ntdll/unix/server.c
 index f3ffd99..e6926b6 100644
 --- a/dlls/ntdll/unix/server.c
