@@ -406,14 +406,6 @@ fi
     fi
 
 		cd wine || exit 1
-                if [ "$WINE_BRANCH" = "vanilla" ] || [ "$WINE_BRANCH" = "staging" ]; then
-		echo "Applying Input Bridge fix..."
-                git revert --no-commit 2bfe81e41f93ce75139e3a6a2d0b68eb2dcb8fa6 || {
-                echo "Error: Failed to revert one or two patches. Stopping."
-                exit 1
-                }
-                clear
-                fi
 		if [ -n "${STAGING_ARGS}" ]; then
 			"${staging_patcher[@]}" ${STAGING_ARGS}
 		else
@@ -517,16 +509,6 @@ if [ "$TERMUX_GLIBC" = "true" ]; then
     clear 
 fi
 fi
-
-# Highly experimental patch for loosening exception handling (thanks to BrunoSX for the idea)
-#if [ "$WINE_BRANCH" = "vanilla" ] || [ "$WINE_BRANCH" = "staging" ]; then
-#echo "Loosening exception handling... (thanks BrunoSX)"
-#patch -d wine -Np1 < "${scriptdir}"/looserexceptionhandling.patch || {
-#        echo "Error: Failed to apply one or more patches."
-#        exit 1
-#    }
-#    clear 
-#fi
     
 # NDIS patch for fixing crappy Android's SELinux limitations.
 if [ "$TERMUX_GLIBC" = "true" ]; then
@@ -545,21 +527,6 @@ patch -d wine -Np1 < "${scriptdir}"/ndis-proot.patch || {
     clear
 fi
 
-#echo "Adding virtual memory environment variable (fixes some games) (credits to BrunoSX for the initial idea)"
-#patch -d wine -Np1 < "${scriptdir}"/virtualmemory.patch || {
-#        echo "Error: Failed to apply one or more patches."
-#        exit 1
-#    }
-#    clear
-
-#if [ "$WINE_BRANCH" = "vanilla" ] || [ "$WINE_BRANCH" = "staging" ]; then
-#    patch -d wine -Np1 < "${scriptdir}"/wine-cpu-topology.patch || {
-#        echo "Error: failed to apply CPU topology patch..."
-#	exit 1
-#    }
-#    clear
-#fi
-
 if [ ! -d wine ]; then
 	clear
 	echo "No Wine source code found!"
@@ -567,14 +534,21 @@ if [ ! -d wine ]; then
 	exit 1
 fi
 
-#cd wine || exit 1
-#if [ "$WINE_BRANCH" = "vanilla" ] || [ "$WINE_BRANCH" = "staging" ]; then
-#git revert --no-commit 2bfe81e41f93ce75139e3a6a2d0b68eb2dcb8fa6 || {
-#        echo "Error: Failed to revert one or two patches. Stopping."
-#        exit 1
-#    }
-#   clear
-#fi
+cd wine || exit 1
+if [ "$WINE_BRANCH" = "vanilla" ]; then
+git revert --no-commit 2bfe81e41f93ce75139e3a6a2d0b68eb2dcb8fa6 || {
+        echo "Error: Failed to revert one or two patches. Stopping."
+        exit 1
+    }
+   clear
+elif [ "$WINE_BRANCH" = "staging" ]; then
+patch -p1 -R < "${scriptdir}"/inputbridgefix.patch || {
+        echo "Error: Failed to revert one or two patches. Stopping."
+        exit 1
+    }
+   clear
+fi
+
 ### Experimental addition to address space hackery
 if [ "$TERMUX_GLIBC" = "true" ]; then
 echo "Applying additional address space patch... (credits to Bylaws)"
