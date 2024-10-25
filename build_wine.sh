@@ -549,6 +549,14 @@ patch -p1 -R < "${scriptdir}"/inputbridgefix.patch || {
    clear
 fi
 
+if [ "$WINE_BRANCH" = "staging" ]; then
+patch -p1 < "${scriptdir}"/wine-cpu-topology.patch || {
+        echo "Error: Failed to revert one or two patches. Stopping."
+        exit 1
+    }
+   clear
+fi
+
 ### Experimental addition to address space hackery
 if [ "$TERMUX_GLIBC" = "true" ]; then
 echo "Applying additional address space patch... (credits to Bylaws)"
