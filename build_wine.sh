@@ -541,7 +541,7 @@ git revert --no-commit 2bfe81e41f93ce75139e3a6a2d0b68eb2dcb8fa6 || {
         exit 1
     }
    clear
-elif [ "$WINE_BRANCH" = "staging" ]; then
+elif [ "$WINE_BRANCH" = "staging" ] || [ "$WINE_BRANCH" = "staging-tkg" ]; then
 patch -p1 -R < "${scriptdir}"/inputbridgefix.patch || {
         echo "Error: Failed to revert one or two patches. Stopping."
         exit 1
@@ -549,7 +549,7 @@ patch -p1 -R < "${scriptdir}"/inputbridgefix.patch || {
    clear
 fi
 
-if [ "$WINE_BRANCH" = "staging" ]; then
+if [ "$WINE_BRANCH" = "staging" ] || [ "$WINE_BRANCH" = "staging-tkg" ]; then
 patch -p1 < "${scriptdir}"/wine-cpu-topology.patch || {
         echo "Error: Failed to revert one or two patches. Stopping."
         exit 1
