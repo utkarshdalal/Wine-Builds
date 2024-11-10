@@ -113,7 +113,7 @@ if [ "${EXPERIMENTAL_WOW64}" = "true" ]; then
    export CROSSCC_X64="x86_64-w64-mingw32-gcc"
    export CROSSCXX_X64="x86_64-w64-mingw32-g++"
 
-   export CFLAGS_X64="-march=sandybridge -mtune=sandybridge -O2 -pipe -mavx -ffast-math -funroll-loops -ftree-vectorize -fgraphite-identity -floop-nest-optimize"
+   export CFLAGS_X64="-march=sandybridge -mtune=sandybridge -pthreads -O2 -pipe -mavx -ffast-math -funroll-loops -ftree-vectorize -fgraphite-identity -floop-nest-optimize"
    export LDFLAGS="-Wl,-O1,--sort-common,--as-needed"
    
    export CROSSCFLAGS_X64="${CFLAGS_X64}"
