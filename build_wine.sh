@@ -535,6 +535,7 @@ if [ ! -d wine ]; then
 fi
 
 cd wine || exit 1
+echo "Fixing Input Bridge..."
 if [ "$WINE_BRANCH" = "vanilla" ]; then
 git revert --no-commit 2bfe81e41f93ce75139e3a6a2d0b68eb2dcb8fa6 || {
         echo "Error: Failed to revert one or two patches. Stopping."
@@ -549,12 +550,18 @@ patch -p1 -R < "${scriptdir}"/inputbridgefix.patch || {
    clear
 fi
 
-if [ "$WINE_BRANCH" = "staging" ] || [ "$WINE_BRANCH" = "staging-tkg" ]; then
+echo "Applying CPU topology patch"
+if [ "$WINE_BRANCH" = "staging" ]; then
 patch -p1 < "${scriptdir}"/wine-cpu-topology.patch || {
         echo "Error: Failed to revert one or two patches. Stopping."
         exit 1
     }
    clear
+elif [ "WINE_BRANCH" = "staging-tkg" ]; then
+patch -p1 < "${scriptdir}"/wine-cpu-topology-tkg.patch || {
+        echo "Error: Failed to apply one or two patches. Stopping."
+        exit 1
+    }
 fi
 
 ### Experimental addition to address space hackery
