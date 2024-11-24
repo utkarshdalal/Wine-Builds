@@ -552,7 +552,7 @@ fi
 
 echo "Applying CPU topology patch"
 if [ "$WINE_BRANCH" = "staging" ]; then
-patch -p1 < "${scriptdir}"/wine-cpu-topology.patch || {
+patch -p1 < "${scriptdir}"/wine-cpu-topology-wine-9.22.patch || {
         echo "Error: Failed to revert one or two patches. Stopping."
         exit 1
     }
