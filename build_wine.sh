@@ -518,7 +518,7 @@ fi
 #        exit 1
 #    }
 #    clear
-else
+#else
 #echo "Circumventing crappy SELinux's limitations... (Thanks BrunoSX)"
 #patch -d wine -Np1 < "${scriptdir}"/ndis-proot.patch || {
 #        echo "Error: Failed to apply one or more patches."
