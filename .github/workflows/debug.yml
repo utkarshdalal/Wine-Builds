@@ -1,0 +1,23 @@
+name: Debug Bubblewrap Issue
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Debug UID Namespace
+        run: |
+          echo "Testing namespaces..."
+          unshare --user --pid echo "Namespaces are working"
+          echo "Done"
+      - name: Check Bubblewrap Version
+        run: |
+          bwrap --version || echo "Bubblewrap not found"
+      - name: Check Permissions
+        run: |
+          id
+          ls -l /proc/self/ns/
