@@ -33,11 +33,8 @@ jobs:
         with:
           name: Proton Experimental WoW64
           path: ./*.tar.xz
-      - name: Upload build logs
-        if: always()  # runs even after failure
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-logs
-          path: |
-            **/build_wine/**/*.log
-            **/build_wine/**/config.log
+      - name: Setup tmate session
+        if: ${{ failure() }}
+        uses: mxschmitt/action-tmate@v3
+        timeout-minutes: 15
+
