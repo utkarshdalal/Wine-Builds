@@ -328,6 +328,10 @@ elif [ "$WINE_BRANCH" = "proton" ]; then
 	    patch -d wine -Np1 < "${scriptdir}"/proton-exp-9.0.patch
 	fi
 
+    if [ "${PROTON_BRANCH}" = "proton_10.0" ] && [ "${CHROOT_DISTRO}" = "noble" ]; then
+        echo "Applying Proton 10.0 ffmpeg patch..."
+        patch -d wine -Np1 < "${scriptdir}"/proton-ffmpeg.patch
+    fi
 
 	WINE_VERSION="$(cat wine/VERSION | tail -c +14)-$(git -C wine rev-parse --short HEAD)"
 	if [[ "${PROTON_BRANCH}" == "experimental_"* ]] || [ "${PROTON_BRANCH}" = "bleeding-edge" ]; then
