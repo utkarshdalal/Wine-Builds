@@ -328,6 +328,10 @@ elif [ "$WINE_BRANCH" = "proton" ]; then
 	    patch -d wine -Np1 < "${scriptdir}"/proton-exp-9.0.patch
 	fi
 
+    echo "PROTON_BRANCH: ${PROTON_BRANCH}"
+    echo "CHROOT_DISTRO: ${CHROOT_DISTRO}"
+    echo "PROTON_BRANCH = proton_10.0 && CHROOT_DISTRO = noble? [ "${PROTON_BRANCH}" = "proton_10.0" ] && [ "${CHROOT_DISTRO}" = "noble" ];"
+
     if [ "${PROTON_BRANCH}" = "proton_10.0" ] && [ "${CHROOT_DISTRO}" = "noble" ]; then
         echo "Applying Proton 10.0 ffmpeg patch..."
         patch -d wine -Np1 < "${scriptdir}"/proton-ffmpeg.patch
