@@ -19,6 +19,8 @@ jobs:
           path: /opt
       - name: Build Proton
         run: |
+          set -euo pipefail
+          set -x
           sudo apt update
           sudo apt install debootstrap perl git wget xz-utils bubblewrap autoconf
           sudo tar -C /opt -xpf "/opt/Bootstraps WoW64/bootstraps_wow64.tar.xz"
@@ -31,3 +33,11 @@ jobs:
         with:
           name: Proton Experimental WoW64
           path: ./*.tar.xz
+      - name: Upload build logs
+        if: always()  # runs even after failure
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs
+          path: |
+            **/build_wine/**/*.log
+            **/build_wine/**/config.log
