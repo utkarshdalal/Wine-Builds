@@ -33,6 +33,8 @@ export CHROOT_X64="${MAINDIR}"/${CHROOT_DISTRO}64_chroot
 prepare_chroot () {
 	CHROOT_PATH="${CHROOT_X64}"
 
+	echo "Running for CHROOT_DISTRO: ${CHROOT_DISTRO}"
+
 	echo "Unmount chroot directories. Just in case."
 	umount -Rl "${CHROOT_PATH}"
 
