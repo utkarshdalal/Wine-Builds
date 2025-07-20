@@ -103,7 +103,7 @@ export BUILD_DIR="${HOME}"/build_wine
 # variables and they are not compatible with old WoW64 build mode.
 if [ "${EXPERIMENTAL_WOW64}" = "true" ]; then
 
-   export BOOTSTRAP_X64=/opt/chroots/noble64_chroot
+   export BOOTSTRAP_X64=/opt/chroots/jammy64_chroot
 
    export scriptdir="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 
@@ -326,11 +326,6 @@ elif [ "$WINE_BRANCH" = "proton" ]; then
 
 	if [ "${PROTON_BRANCH}" = "experimental_9.0" ] || [ "${PROTON_BRANCH}" = "bleeding-edge" ]; then
 	    patch -d wine -Np1 < "${scriptdir}"/proton-exp-9.0.patch
-	fi
-
-    if [ "${PROTON_BRANCH}" = "proton_10.0" ]; then
-	    echo "Applying Proton 10.0 ffmpeg patch..."
-	    patch -d wine -Np1 < "${scriptdir}"/proton-ffmpeg.patch
 	fi
 
 
