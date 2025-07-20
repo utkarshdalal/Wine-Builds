@@ -5,13 +5,13 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Download artifact
         id: download-artifact
-        uses: dawidd6/action-download-artifact@v2
+        uses: dawidd6/action-download-artifact@v3
         continue-on-error: true
         with:
           workflow: bootstrap_wow64.yml
@@ -27,7 +27,7 @@ jobs:
           export EXPERIMENTAL_WOW64="true"
           WINE_BRANCH=proton PROTON_BRANCH=proton_10.0 ./build_wine.sh
           sha256sum *.tar.xz
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: Proton Experimental WoW64
           path: ./*.tar.xz

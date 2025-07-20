@@ -5,7 +5,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - uses: actions/checkout@v4
@@ -29,7 +29,7 @@ jobs:
           WINE_BRANCH=staging ./build_wine.sh
           WINE_BRANCH=staging-tkg ./build_wine.sh
           sha256sum *.tar.xz
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: Wine
           path: ./*.tar.xz
