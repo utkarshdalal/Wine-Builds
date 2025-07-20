@@ -1,4 +1,4 @@
-name: Bootstraps WoW64 CI
+name: Bootstraps WoW64 CI Jammy
 
 on:
   workflow_dispatch:
