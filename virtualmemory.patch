@@ -1,18 +1,30 @@
+From 7189f809a4f7ced5ee19d07773eeec5a760603ac Mon Sep 17 00:00:00 2001
+From: Utkarsh Dalal <utkarsh.dalal@toptal.com>
+Date: Sun, 20 Jul 2025 14:21:03 +0530
+Subject: [PATCH 6/7] virtualmemory
+
+---
+ dlls/ntdll/unix/virtual.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
 diff --git a/dlls/ntdll/unix/virtual.c b/dlls/ntdll/unix/virtual.c
-index dce03c2..45a3b78 100644
+index c465108e72c..d9bb613b546 100644
 --- a/dlls/ntdll/unix/virtual.c
 +++ b/dlls/ntdll/unix/virtual.c
-@@ -4473,7 +4473,12 @@ static NTSTATUS allocate_virtual_memory( void **ret, SIZE_T *size_ptr, ULONG typ
+@@ -2525,7 +2525,12 @@ static NTSTATUS map_view( struct file_view **view_ret, void *base, size_t size,
  
-     /* Round parameters to a page boundary */
- 
--    if (is_beyond_limit( 0, size, working_set_limit )) return STATUS_WORKING_SET_LIMIT_RANGE;
-+    // Get the environment variable value, default to 4096L << 20 if not set
-+    const char *env_var = getenv("WINE_VIRTUAL_MEMORY_SIZE");
-+    ULONG_PTR env_size_limit = env_var ? strtol(env_var, NULL, 10) << 20 : 4096L << 20;
-+
-+    if (is_beyond_limit( 0, size, working_set_limit ) || size > env_size_limit)
-+        return STATUS_WORKING_SET_LIMIT_RANGE;
- 
-     if (*ret)
+     if (base)
      {
+-        if (is_beyond_limit( base, size, address_space_limit )) return STATUS_WORKING_SET_LIMIT_RANGE;
++        // Get the environment variable value, default to 4096L << 20 if not set
++        const char *env_var = getenv("WINE_VIRTUAL_MEMORY_SIZE");
++        ULONG_PTR env_size_limit = env_var ? strtol(env_var, NULL, 10) << 20 : 4096L << 20;
++
++        if (is_beyond_limit( 0, size, working_set_limit ) || size > env_size_limit)
++            return STATUS_WORKING_SET_LIMIT_RANGE;
+         if (limit_low && base < (void *)limit_low) return STATUS_CONFLICTING_ADDRESSES;
+         if (limit_high && is_beyond_limit( base, size, (void *)limit_high )) return STATUS_CONFLICTING_ADDRESSES;
+         if (is_beyond_limit( base, size, host_addr_space_limit )) return STATUS_CONFLICTING_ADDRESSES;
+-- 
+2.43.0
+

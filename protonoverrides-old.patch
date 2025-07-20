@@ -1,20 +1,11 @@
-From 5b034e462422df80d82baafd7201151ef6eca010 Mon Sep 17 00:00:00 2001
-From: Utkarsh Dalal <utkarsh.dalal@toptal.com>
-Date: Sun, 20 Jul 2025 14:15:16 +0530
-Subject: [PATCH 4/7] protonoverrides
-
----
- loader/wine.inf.in | 74 ++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 74 insertions(+)
-
 diff --git a/loader/wine.inf.in b/loader/wine.inf.in
-index 5ee2f8c4eb3..7ce298fb763 100644
+index 456555e..bb4d5af 100644
 --- a/loader/wine.inf.in
 +++ b/loader/wine.inf.in
-@@ -2888,6 +2888,80 @@ InfFiles  = 17
+@@ -2724,3 +2724,76 @@ EtcFiles  = 12,etc
+ InfFiles  = 17
  NlsFiles  = 11
  SortFiles = 10,globalization\sorting
- 
 +
 +[ProtonOverrides]
 +HKLM,Software\Khronos\OpenXR\1,"ActiveRuntime",,"C:\openxr\wineopenxr64.json"
@@ -88,10 +79,4 @@ index 5ee2f8c4eb3..7ce298fb763 100644
 +HKCU,Software\Wine\AppDefaults\RiftApart.exe\DllOverrides,"atiadlxx",,"builtin"
 +HKLM,Software\Wow6432Node\lucasarts entertainment company llc\Star Wars: Episode I Racer\v1.0,"Display Height",0x10001,480
 +HKLM,Software\Wow6432Node\lucasarts entertainment company llc\Star Wars: Episode I Racer\v1.0,"Display Width",0x10001,640
-+
- [SteamClient]
- HKCU,Software\Valve\Steam,"SteamPath",,"%16422%\Steam"
- HKCU,Software\Valve\Steam,"SteamExe",,"%16422%\Steam\Steam.exe"
--- 
-2.43.0
 

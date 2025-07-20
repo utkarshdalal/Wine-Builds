@@ -1,24 +1,12 @@
-From 6f4220be122d76e4f54f3600f9e0c8225066134d Mon Sep 17 00:00:00 2001
-From: Utkarsh Dalal <utkarsh.dalal@toptal.com>
-Date: Sun, 20 Jul 2025 14:09:02 +0530
-Subject: [PATCH 3/7] path-patch-universal
-
----
- dlls/crypt32/unixlib.c                     | 45 +++++++---------------
- dlls/ntdll/unix/server.c                   |  3 +-
- programs/winemenubuilder/winemenubuilder.c |  3 +-
- server/request.c                           |  3 +-
- 4 files changed, 19 insertions(+), 35 deletions(-)
-
 diff --git a/dlls/crypt32/unixlib.c b/dlls/crypt32/unixlib.c
-index 5e65302ac9a..161e0eafe35 100644
+index 5a25544..3e49ad4 100644
 --- a/dlls/crypt32/unixlib.c
 +++ b/dlls/crypt32/unixlib.c
-@@ -621,48 +621,29 @@ static const char * const CRYPT_knownLocations[] = {
+@@ -621,47 +621,27 @@ static const char * const CRYPT_knownLocations[] = {
   "/usr/local/share/certs/",
   "/etc/sfw/openssl/certs",
   "/etc/security/cacerts",  /* Android */
-+ "/data/data/app.gamenative/files/imagefs/usr/etc/ca-certificates/cacert.pem",
++ "/data/data/com.termux/files/usr/glibc/etc/ca-certificates/cacert.pem",
 + NULL
  };
  
@@ -27,12 +15,10 @@ index 5e65302ac9a..161e0eafe35 100644
 +    return env_path ? env_path : CRYPT_knownLocations[3];
 +}
 +
-+
  static void load_root_certs(void)
  {
-     const char *additional_dir;
      unsigned int i;
-+    const char *ca_cert_path = get_ca_cert_path();
++    const char *cert_path = get_ca_cert_path();
  
 -#ifdef __APPLE__
 -    const SecTrustSettingsDomain domains[] = {
@@ -73,51 +59,48 @@ index 5e65302ac9a..161e0eafe35 100644
 -
 -    for (i = 0; i < ARRAY_SIZE(CRYPT_knownLocations) && list_empty(&root_cert_list); i++)
 -        import_certs_from_path( CRYPT_knownLocations[i], TRUE );
+ }
  
-     if ((additional_dir = getenv( "WINE_ADDITIONAL_CERTS_DIR" )))
-         import_certs_from_path( additional_dir, TRUE );
+ static NTSTATUS enum_root_certs( void *args )
 diff --git a/dlls/ntdll/unix/server.c b/dlls/ntdll/unix/server.c
-index d16f95d9169..a0530865314 100644
+index f3ffd99..e6926b6 100644
 --- a/dlls/ntdll/unix/server.c
 +++ b/dlls/ntdll/unix/server.c
-@@ -1266,7 +1266,8 @@ static const char *init_server_dir( dev_t dev, ino_t ino )
+@@ -1240,7 +1240,8 @@ static const char *init_server_dir( dev_t dev, ino_t ino )
  #ifdef __ANDROID__  /* there's no /tmp dir on Android */
      asprintf( &dir, "%s/.wineserver/server-%llx-%llx", config_dir, (unsigned long long)dev, (unsigned long long)ino );
  #else
 -    asprintf( &dir, "/tmp/.wine-%u/server-%llx-%llx", getuid(), (unsigned long long)dev, (unsigned long long)ino );
-+    const char *tmp_dir = getenv("WINE_TMP_DIR") ? getenv("WINE_TMP_DIR") : "/data/data/app.gamenative/files/imagefs/usr/tmp";
++    const char *tmp_dir = getenv("WINE_TMP_DIR") ? getenv("WINE_TMP_DIR") : "/data/data/com.termux/files/usr/tmp";
 +    asprintf( &dir, "%s/.wine-%u/server-%llx-%llx", tmp_dir, getuid(), (unsigned long long)dev, (unsigned long long)ino );
  #endif
      return dir;
  }
 diff --git a/programs/winemenubuilder/winemenubuilder.c b/programs/winemenubuilder/winemenubuilder.c
-index 6d34fa687ad..00b25324e4a 100644
+index 36569fa..bf2b178 100644
 --- a/programs/winemenubuilder/winemenubuilder.c
 +++ b/programs/winemenubuilder/winemenubuilder.c
-@@ -1621,7 +1621,8 @@ static BOOL build_native_mime_types(struct list *mime_types)
+@@ -1724,7 +1724,8 @@ static BOOL build_native_mime_types(struct list *mime_types)
      if (_wgetenv( L"XDG_DATA_DIRS" ))
          dirs = xwcsdup( _wgetenv( L"XDG_DATA_DIRS" ));
      else
 -        dirs = xwcsdup( L"/usr/local/share/:/usr/share/" );
 +        dirs = xwcsdup( _wgetenv(L"WINE_SHARE_DIRS") ? _wgetenv(L"WINE_SHARE_DIRS") :
-+                         L"/data/data/app.gamenative/files/imagefs/usr/local/share:/data/data/app.gamenative/files/imagefs/usr/share" );
++                         L"/data/data/com.termux/files/usr/glibc/local/share:/data/data/com.termux/files/usr/glibc/share" );
  
      ret = add_mimes(xdg_data_dir, mime_types);
      if (ret)
 diff --git a/server/request.c b/server/request.c
-index 478e1f9cabf..4a293e2f9c5 100644
+index dabcea6..be1e1a8 100644
 --- a/server/request.c
 +++ b/server/request.c
-@@ -645,7 +645,8 @@ static char *create_server_dir( int force )
+@@ -644,7 +644,8 @@ static char *create_server_dir( int force )
      if (asprintf( &base_dir, "%s/.wineserver", config_dir ) == -1)
          fatal_error( "out of memory\n" );
  #else
 -    if (asprintf( &base_dir, "/tmp/.wine-%u", getuid() ) == -1)
-+    const char *tmp_dir = getenv("WINE_TMP_DIR") ? getenv("WINE_TMP_DIR") : "/data/data/app.gamenative/files/imagefs/usr/tmp";
++    const char *tmp_dir = getenv("WINE_TMP_DIR") ? getenv("WINE_TMP_DIR") : "/data/data/com.termux/files/usr/tmp";
 +    if (asprintf( &base_dir, "%s/.wine-%u", tmp_dir, getuid() ) == -1)
          fatal_error( "out of memory\n" );
  #endif
      create_dir( base_dir, &st2 );
--- 
-2.43.0
-

@@ -1,19 +1,8 @@
-From 22cb0818fae5ad032e32103f6c241c4fefcd7520 Mon Sep 17 00:00:00 2001
-From: Utkarsh Dalal <utkarsh.dalal@toptal.com>
-Date: Sun, 20 Jul 2025 14:19:18 +0530
-Subject: [PATCH 5/7] termux-wine-fix
-
----
- dlls/ntdll/unix/server.c  | 4 +++-
- dlls/ntdll/unix/virtual.c | 6 +++---
- loader/preloader.c        | 2 +-
- 3 files changed, 7 insertions(+), 5 deletions(-)
-
 diff --git a/dlls/ntdll/unix/server.c b/dlls/ntdll/unix/server.c
-index a0530865314..be588130748 100644
+index 88ac9551060..d750a6b5cd1 100644
 --- a/dlls/ntdll/unix/server.c
 +++ b/dlls/ntdll/unix/server.c
-@@ -1309,8 +1309,10 @@ static int setup_config_dir(void)
+@@ -1302,8 +1302,10 @@ static int setup_config_dir(void)
      if (!mkdir( "dosdevices", 0777 ))
      {
          mkdir( "drive_c", 0777 );
@@ -21,15 +10,15 @@ index a0530865314..be588130748 100644
 +        symlink( "/sdcard", "dosdevices/d:" );
          symlink( "../drive_c", "dosdevices/c:" );
 -        symlink( "/", "dosdevices/z:" );
-+        symlink( "/data/data/app.gamenative/files/imagefs", "dosdevices/z:" );
++        symlink( "/data/data/com.termux/files", "dosdevices/z:" );
      }
      else if (errno != EEXIST) fatal_perror( "cannot create %s/dosdevices", config_dir );
  
 diff --git a/dlls/ntdll/unix/virtual.c b/dlls/ntdll/unix/virtual.c
-index 3f9b8c89eda..c465108e72c 100644
+index 02c0bebe879..84a12cad4c6 100644
 --- a/dlls/ntdll/unix/virtual.c
 +++ b/dlls/ntdll/unix/virtual.c
-@@ -293,9 +293,9 @@ static void *address_space_start = (void *)0x110000; /* keep DOS area clear */
+@@ -163,9 +163,9 @@ static void *address_space_start = (void *)0x110000; /* keep DOS area clear */
  static void *address_space_start = (void *)0x10000;
  #endif
  #ifdef _WIN64
@@ -43,18 +32,15 @@ index 3f9b8c89eda..c465108e72c 100644
  static void *address_space_limit = (void *)0xc0000000;
  static void *user_space_limit    = (void *)0x7fff0000;
 diff --git a/loader/preloader.c b/loader/preloader.c
-index f27d6df8c17..ffc4dae33d0 100644
+index d0551bae63a..9baa5e090f9 100644
 --- a/loader/preloader.c
 +++ b/loader/preloader.c
-@@ -1487,7 +1487,7 @@ void* wld_start( void **stack )
+@@ -1447,7 +1447,7 @@ void* wld_start( void **stack )
          {
              /* don't warn for low 64k */
              if (preload_info[i].addr >= (void *)0x10000
 -#ifdef __aarch64__
-+#ifdef 1
++#if 1
                  && preload_info[i].addr < (void *)0x7fffffffff /* ARM64 address space might end here*/
  #endif
              )
--- 
-2.43.0
-
