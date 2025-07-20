@@ -1,50 +1,66 @@
-diff -uNr a/dlls/crypt32/unixlib.c b/dlls/crypt32/unixlib.c
---- a/dlls/crypt32/unixlib.c	2023-12-04 12:47:08.053258896 +0300
-+++ b/dlls/crypt32/unixlib.c	2023-12-04 12:53:50.192309555 +0300
-@@ -619,6 +619,7 @@
+From 7981f605aae518ee07a8f80e0cd3dd7d5e306af9 Mon Sep 17 00:00:00 2001
+From: Utkarsh Dalal <utkarsh.dalal@toptal.com>
+Date: Sun, 20 Jul 2025 16:15:21 +0530
+Subject: [PATCH] pathfix
+
+---
+ dlls/crypt32/unixlib.c                     | 1 +
+ dlls/ntdll/unix/server.c                   | 2 +-
+ programs/winemenubuilder/winemenubuilder.c | 2 +-
+ server/request.c                           | 2 +-
+ 4 files changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/dlls/crypt32/unixlib.c b/dlls/crypt32/unixlib.c
+index 5e65302ac9a..92ea1198d9f 100644
+--- a/dlls/crypt32/unixlib.c
++++ b/dlls/crypt32/unixlib.c
+@@ -621,6 +621,7 @@ static const char * const CRYPT_knownLocations[] = {
   "/usr/local/share/certs/",
   "/etc/sfw/openssl/certs",
   "/etc/security/cacerts",  /* Android */
-+ "/data/data/com.termux/files/usr/glibc/etc/ca-certificates/cacert.pem"
++ "/data/data/app.gamenative/files/imagefs/etc/ca-certificates/cacert.pem"
  };
  
  static void load_root_certs(void)
-diff -uNr a/programs/winemenubuilder/winemenubuilder.c b/programs/winemenubuilder/winemenubuilder.c
---- a/programs/winemenubuilder/winemenubuilder.c	2023-12-04 12:47:08.946595692 +0300
-+++ b/programs/winemenubuilder/winemenubuilder.c	2023-12-04 12:53:50.195642913 +0300
-@@ -1724,7 +1724,7 @@
+diff --git a/dlls/ntdll/unix/server.c b/dlls/ntdll/unix/server.c
+index d16f95d9169..8e893a68494 100644
+--- a/dlls/ntdll/unix/server.c
++++ b/dlls/ntdll/unix/server.c
+@@ -1266,7 +1266,7 @@ static const char *init_server_dir( dev_t dev, ino_t ino )
+ #ifdef __ANDROID__  /* there's no /tmp dir on Android */
+     asprintf( &dir, "%s/.wineserver/server-%llx-%llx", config_dir, (unsigned long long)dev, (unsigned long long)ino );
+ #else
+-    asprintf( &dir, "/tmp/.wine-%u/server-%llx-%llx", getuid(), (unsigned long long)dev, (unsigned long long)ino );
++    asprintf( &dir, "/data/data/app.gamenative/files/imagefs/usr/tmp/.wine-%u/server-%llx-%llx", getuid(), (unsigned long long)dev, (unsigned long long)ino );
+ #endif
+     return dir;
+ }
+diff --git a/programs/winemenubuilder/winemenubuilder.c b/programs/winemenubuilder/winemenubuilder.c
+index 6d34fa687ad..a0d1a883995 100644
+--- a/programs/winemenubuilder/winemenubuilder.c
++++ b/programs/winemenubuilder/winemenubuilder.c
+@@ -1621,7 +1621,7 @@ static BOOL build_native_mime_types(struct list *mime_types)
      if (_wgetenv( L"XDG_DATA_DIRS" ))
          dirs = xwcsdup( _wgetenv( L"XDG_DATA_DIRS" ));
      else
 -        dirs = xwcsdup( L"/usr/local/share/:/usr/share/" );
-+        dirs = xwcsdup( L"/data/data/com.termux/files/usr/glibc/local/share:/data/data/com.termux/files/usr/glibc/share" );
++        dirs = xwcsdup( L"/data/data/app.gamenative/files/imagefs/usr/local/share:/data/data/app.gamenative/files/imagefs/usr/share" );
  
      ret = add_mimes(xdg_data_dir, mime_types);
      if (ret)
-diff -uNr a/server/request.c b/server/request.c
---- a/server/request.c	2023-12-04 12:47:08.956595729 +0300
-+++ b/server/request.c	2023-12-04 12:53:50.195642913 +0300
-@@ -663,9 +663,9 @@
-     strcpy( server_dir, config_dir );
-     strcat( server_dir, "/.wineserver" );
+diff --git a/server/request.c b/server/request.c
+index 478e1f9cabf..3318039c03d 100644
+--- a/server/request.c
++++ b/server/request.c
+@@ -645,7 +645,7 @@ static char *create_server_dir( int force )
+     if (asprintf( &base_dir, "%s/.wineserver", config_dir ) == -1)
+         fatal_error( "out of memory\n" );
  #else
--    len += sizeof("/tmp/.wine-") + 12;
-+    len += sizeof("/data/data/com.termux/files/usr/tmp/.wine");
-     if (!(server_dir = malloc( len ))) fatal_error( "out of memory\n" );
--    sprintf( server_dir, "/tmp/.wine-%u", getuid() );
-+    strcpy( server_dir, "/data/data/com.termux/files/usr/tmp/.wine" );
+-    if (asprintf( &base_dir, "/tmp/.wine-%u", getuid() ) == -1)
++    if (asprintf( &base_dir, "/data/data/app.gamenative/files/imagefs/usr/tmp/.wine-%u", getuid() ) == -1)
+         fatal_error( "out of memory\n" );
  #endif
-     create_dir( server_dir, &st2 );
- 
-diff -uNr a/dlls/ntdll/unix/server.c b/dlls/ntdll/unix/server.c
---- a/dlls/ntdll/unix/server.c	2023-12-04 12:47:08.396593560 +0300
-+++ b/dlls/ntdll/unix/server.c	2023-12-04 12:56:08.003396911 +0300
-@@ -1260,7 +1260,7 @@
- #ifdef __ANDROID__  /* there's no /tmp dir on Android */
-     asprintf( &dir, "%s/.wineserver/server-%s", config_dir, tmp );
- #else
--    asprintf( &dir, "/tmp/.wine-%u/server-%s", getuid(), tmp );
-+    asprintf( &dir, "/data/data/com.termux/files/usr/tmp/.wine/server-%s", tmp );
- #endif
-     return dir;
- }
+     create_dir( base_dir, &st2 );
+-- 
+2.43.0
+
