@@ -1,0 +1,60 @@
+From c13035daccb19c88d0137cb39ceee94981281776 Mon Sep 17 00:00:00 2001
+From: Utkarsh Dalal <utkarsh.dalal@toptal.com>
+Date: Thu, 14 Aug 2025 12:54:21 +0530
+Subject: [PATCH 2/3] proton 9.0 termux wine fix
+
+---
+ dlls/ntdll/unix/server.c  | 4 +++-
+ dlls/ntdll/unix/virtual.c | 6 +++---
+ loader/preloader.c        | 2 +-
+ 3 files changed, 7 insertions(+), 5 deletions(-)
+
+diff --git a/dlls/ntdll/unix/server.c b/dlls/ntdll/unix/server.c
+index 992e5cfdc3d..2bc184496c3 100644
+--- a/dlls/ntdll/unix/server.c
++++ b/dlls/ntdll/unix/server.c
+@@ -1317,8 +1317,10 @@ static int setup_config_dir(void)
+     if (!mkdir( "dosdevices", 0777 ))
+     {
+         mkdir( "drive_c", 0777 );
++        mkdir( "drive_d", 0777 );
++        symlink( "/sdcard", "dosdevices/d:" );
+         symlink( "../drive_c", "dosdevices/c:" );
+-        symlink( "/", "dosdevices/z:" );
++        symlink( "/data/data/app.gamenative/files/imagefs", "dosdevices/z:" );
+     }
+     else if (errno != EEXIST) fatal_perror( "cannot create %s/dosdevices", config_dir );
+ 
+diff --git a/dlls/ntdll/unix/virtual.c b/dlls/ntdll/unix/virtual.c
+index 097f71643c5..137289bfa98 100644
+--- a/dlls/ntdll/unix/virtual.c
++++ b/dlls/ntdll/unix/virtual.c
+@@ -293,9 +293,9 @@ static void *address_space_start = (void *)0x110000; /* keep DOS area clear */
+ static void *address_space_start = (void *)0x10000;
+ #endif
+ #ifdef _WIN64
+-static void *address_space_limit = (void *)0x7fffffff0000;  /* top of the total available address space */
+-static void *user_space_limit    = (void *)0x7fffffff0000;  /* top of the user address space */
+-static void *working_set_limit   = (void *)0x7fffffff0000;  /* top of the current working set */
++static void *address_space_limit = (void *)0x7fffff0000;  /* top of the total available address space */
++static void *user_space_limit    = (void *)0x7fffff0000;  /* top of the user address space */
++static void *working_set_limit   = (void *)0x7fffff0000;  /* top of the current working set */
+ #else
+ static void *address_space_limit = (void *)0xc0000000;
+ static void *user_space_limit    = (void *)0x7fff0000;
+diff --git a/loader/preloader.c b/loader/preloader.c
+index f27d6df8c17..ffc4dae33d0 100644
+--- a/loader/preloader.c
++++ b/loader/preloader.c
+@@ -1487,7 +1487,7 @@ void* wld_start( void **stack )
+         {
+             /* don't warn for low 64k */
+             if (preload_info[i].addr >= (void *)0x10000
+-#ifdef __aarch64__
++#if 1
+                 && preload_info[i].addr < (void *)0x7fffffffff /* ARM64 address space might end here*/
+ #endif
+             )
+-- 
+2.43.0
+

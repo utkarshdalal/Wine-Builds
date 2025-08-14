@@ -1,0 +1,69 @@
+From 05b77b411319c2bc5cfb9608f7649749b23e4f81 Mon Sep 17 00:00:00 2001
+From: Utkarsh Dalal <utkarsh.dalal@toptal.com>
+Date: Thu, 14 Aug 2025 13:44:34 +0530
+Subject: [PATCH 3/3] proton 9.0 pathfix
+
+---
+ dlls/crypt32/unixlib.c                     | 1 +
+ dlls/ntdll/unix/server.c                   | 2 +-
+ programs/winemenubuilder/winemenubuilder.c | 2 +-
+ server/request.c                           | 4 ++--
+ 4 files changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/dlls/crypt32/unixlib.c b/dlls/crypt32/unixlib.c
+index feb0c360d68..6640ff423f9 100644
+--- a/dlls/crypt32/unixlib.c
++++ b/dlls/crypt32/unixlib.c
+@@ -619,6 +619,7 @@ static const char * const CRYPT_knownLocations[] = {
+  "/usr/local/share/certs/",
+  "/etc/sfw/openssl/certs",
+  "/etc/security/cacerts",  /* Android */
++ "/data/data/app.gamenative/files/imagefs/etc/ca-certificates/cacert.pem"
+ };
+ 
+ static void load_root_certs(void)
+diff --git a/dlls/ntdll/unix/server.c b/dlls/ntdll/unix/server.c
+index 2bc184496c3..2c269f08b5f 100644
+--- a/dlls/ntdll/unix/server.c
++++ b/dlls/ntdll/unix/server.c
+@@ -1275,7 +1275,7 @@ static const char *init_server_dir( dev_t dev, ino_t ino )
+ #ifdef __ANDROID__  /* there's no /tmp dir on Android */
+     asprintf( &dir, "%s/.wineserver/server-%s", config_dir, tmp );
+ #else
+-    asprintf( &dir, "/tmp/.wine-%u/server-%s", getuid(), tmp );
++    asprintf( &dir, "/data/data/app.gamenative/files/imagefs/usr/tmp/.wine/server-%s", tmp );
+ #endif
+     return dir;
+ }
+diff --git a/programs/winemenubuilder/winemenubuilder.c b/programs/winemenubuilder/winemenubuilder.c
+index 6d34fa687ad..a0d1a883995 100644
+--- a/programs/winemenubuilder/winemenubuilder.c
++++ b/programs/winemenubuilder/winemenubuilder.c
+@@ -1621,7 +1621,7 @@ static BOOL build_native_mime_types(struct list *mime_types)
+     if (_wgetenv( L"XDG_DATA_DIRS" ))
+         dirs = xwcsdup( _wgetenv( L"XDG_DATA_DIRS" ));
+     else
+-        dirs = xwcsdup( L"/usr/local/share/:/usr/share/" );
++        dirs = xwcsdup( L"/data/data/app.gamenative/files/imagefs/usr/local/share:/data/data/app.gamenative/files/imagefs/usr/share" );
+ 
+     ret = add_mimes(xdg_data_dir, mime_types);
+     if (ret)
+diff --git a/server/request.c b/server/request.c
+index 343e1a92e0e..57b898dbbc6 100644
+--- a/server/request.c
++++ b/server/request.c
+@@ -665,9 +665,9 @@ static char *create_server_dir( int force )
+     strcpy( server_dir, config_dir );
+     strcat( server_dir, "/.wineserver" );
+ #else
+-    len += sizeof("/tmp/.wine-") + 12;
++    len += sizeof("/data/data/app.gamenative/files/imagefs/usr/tmp/.wine");
+     if (!(server_dir = malloc( len ))) fatal_error( "out of memory\n" );
+-    sprintf( server_dir, "/tmp/.wine-%u", getuid() );
++    strcpy( server_dir, "/data/data/app.gamenative/files/imagefs/usr/tmp/.wine" );
+ #endif
+     create_dir( server_dir, &st2 );
+ 
+-- 
+2.43.0
+

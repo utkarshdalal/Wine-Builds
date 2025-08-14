@@ -505,19 +505,32 @@ if [ "$TERMUX_GLIBC" = "true" ]; then
     }
     clear 
     elif [ "$WINE_BRANCH" = "proton" ]; then
-    echo "Applying esync patch"
-    patch -d wine -Np1 < "${scriptdir}"/esync.patch && \
-    echo "Applying address space patch"
-    patch -d wine -Np1 < "${scriptdir}"/termux-wine-fix.patch && \
-    echo "Applying path change patch"
-    ## Proton is based on Wine 9.0 stable release so some of the updates
-    ## for patches are not required.
-    patch -d wine -Np1 < "${scriptdir}"/pathfix.patch || {
-        echo "Error: Failed to apply one or more patches."
-        exit 1
-    }
-    clear 
-fi
+        if [ "${PROTON_BRANCH}" = "proton_10.0" ]; then
+            echo "Applying esync patch"
+            patch -d wine -Np1 < "${scriptdir}"/esync.patch && \
+            echo "Applying address space patch"
+            patch -d wine -Np1 < "${scriptdir}"/termux-wine-fix.patch && \
+            echo "Applying path change patch"
+            ## Proton is based on Wine 9.0 stable release so some of the updates
+            ## for patches are not required.
+            patch -d wine -Np1 < "${scriptdir}"/pathfix.patch || {
+                echo "Error: Failed to apply one or more patches."
+                exit 1
+            }
+            clear
+        elif [ "${PROTON_BRANCH}" = "proton_9.0" ]; then
+            echo "Applying esync patch"
+            patch -d wine -Np1 < "${scriptdir}"/proton-9.0-esync.patch && \
+            echo "Applying address space patch"
+            patch -d wine -Np1 < "${scriptdir}"/proton-9.0-termux-wine-fix.patch && \
+            echo "Applying path change patch"
+            patch -d wine -Np1 < "${scriptdir}"/proton-9.0-pathfix.patch || {
+                echo "Error: Failed to apply one or more patches."
+                exit 1
+            }
+            clear
+        fi
+    fi
 fi
     
 ## NDIS patch for fixing crappy Android's SELinux limitations.
@@ -577,11 +590,19 @@ fi
 ### Experimental addition to address space hackery
 if [ "$TERMUX_GLIBC" = "true" ]; then
 echo "Applying additional address space patch... (credits to Bylaws)"
-patch -p1 < "${scriptdir}"/wine-virtual-memory.patch || {
-        echo "This patch did not apply. Stopping..."
-	exit 1
-    }
-    clear
+    if [ "${PROTON_BRANCH}" = "proton_9.0" ]; then
+        patch -p1 < "${scriptdir}"/proton-9.0-wine-virtual-memory.patch || {
+            echo "This patch did not apply. Stopping..."
+            exit 1
+        }
+        clear
+    else
+        patch -p1 < "${scriptdir}"/wine-virtual-memory.patch || {
+            echo "This patch did not apply. Stopping..."
+            exit 1
+        }
+        clear
+    fi
 fi
 
 ###
