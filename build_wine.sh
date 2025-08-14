@@ -590,11 +590,19 @@ fi
 ### Experimental addition to address space hackery
 if [ "$TERMUX_GLIBC" = "true" ]; then
 echo "Applying additional address space patch... (credits to Bylaws)"
-patch -p1 < "${scriptdir}"/wine-virtual-memory.patch || {
-        echo "This patch did not apply. Stopping..."
-	exit 1
-    }
-    clear
+    if [ "${PROTON_BRANCH}" = "proton_9.0" ]; then
+        patch -p1 < "${scriptdir}"/proton-9.0-wine-virtual-memory.patch || {
+            echo "This patch did not apply. Stopping..."
+            exit 1
+        }
+        clear
+    else
+        patch -p1 < "${scriptdir}"/wine-virtual-memory.patch || {
+            echo "This patch did not apply. Stopping..."
+            exit 1
+        }
+        clear
+    fi
 fi
 
 ###
