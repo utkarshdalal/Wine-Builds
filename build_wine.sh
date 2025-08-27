@@ -521,6 +521,8 @@ if [ "$TERMUX_GLIBC" = "true" ]; then
         elif [ "${PROTON_BRANCH}" = "proton_9.0" ]; then
             echo "Applying esync patch"
             patch -d wine -Np1 < "${scriptdir}"/proton-9.0-esync.patch && \
+            echo "Applying change BitBlt to StetchBlt patch"
+            patch -d wine -Np1 < "${scriptdir}"/change-BitBlt-to-StetchBlt.patch && \
             echo "Applying address space patch"
             patch -d wine -Np1 < "${scriptdir}"/proton-9.0-termux-wine-fix.patch && \
             echo "Applying path change patch"
