@@ -525,6 +525,8 @@ if [ "$TERMUX_GLIBC" = "true" ]; then
             patch -d wine -Np1 < "${scriptdir}"/change-BitBlt-to-StetchBlt.patch && \
             echo "Applying address space patch"
             patch -d wine -Np1 < "${scriptdir}"/proton-9.0-termux-wine-fix.patch && \
+            echo "Applying x11 to working version patch"
+            patch -d wine -Np1 < "${scriptdir}"/revert-x11-to-working-version.patch && \
             echo "Applying path change patch"
             patch -d wine -Np1 < "${scriptdir}"/proton-9.0-pathfix.patch || {
                 echo "Error: Failed to apply one or more patches."
