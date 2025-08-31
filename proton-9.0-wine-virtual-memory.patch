@@ -1,0 +1,25 @@
+From f06deb6a483c2f07f80888a2f8770247b7d7beaf Mon Sep 17 00:00:00 2001
+From: Utkarsh Dalal <utkarsh.dalal@toptal.com>
+Date: Thu, 14 Aug 2025 13:57:03 +0530
+Subject: [PATCH] proton 9.0 wine virtual memory
+
+---
+ server/mapping.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/server/mapping.c b/server/mapping.c
+index d6c6c46d7c4..75eca660fc7 100644
+--- a/server/mapping.c
++++ b/server/mapping.c
+@@ -245,7 +245,7 @@ void init_memory(void)
+ {
+     page_mask = sysconf( _SC_PAGESIZE ) - 1;
+     free_map_addr( 0x60000000, 0x1c000000 );
+-    free_map_addr( 0x600000000000, 0x100000000000 );
++    free_map_addr( 0x4000000000, 0x1000000000 );
+ }
+ 
+ static void ranges_dump( struct object *obj, int verbose )
+-- 
+2.43.0
+
