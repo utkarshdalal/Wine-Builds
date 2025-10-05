@@ -317,7 +317,7 @@ elif [ "$WINE_BRANCH" = "wayland" ]; then
                                ${WINE_BUILD_OPTIONS}"
 elif [ "$WINE_BRANCH" = "proton" ]; then
     if [ "${PROTON_BRANCH}" = "pipetto-crypto_9.0" ]; then
-        git clone https://github.com/utkarshdalal/pipetto-crypto-wine.git -b proton-9.0-x86_64 wine
+        git clone https://github.com/utkarshdalal/pipetto-crypto-wine.git -b proton-9.0-arm64ec wine
 	elif [ -z "${PROTON_BRANCH}" ]; then
 		git clone https://github.com/ValveSoftware/wine
 	else
@@ -615,10 +615,6 @@ fi
 dlls/winevulkan/make_vulkan
 tools/make_requests
 tools/make_specfiles
-if [ "${PROTON_BRANCH}" = "pipetto-crypto_9.0" ]; then
-    mkdir -p dlls/wineandroid.drv
-    : > dlls/wineandroid.drv/build.gradle.in
-fi
 autoreconf -f
 cd "${BUILD_DIR}" || exit 1
 
