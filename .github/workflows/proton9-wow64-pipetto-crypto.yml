@@ -2,6 +2,9 @@ name: Proton 9.0 WoW64 CI pipetto-crypto
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - proton-9
 
 jobs:
   build:
