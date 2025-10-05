@@ -602,7 +602,7 @@ echo "Applying additional address space patch... (credits to Bylaws)"
             exit 1
         }
         clear
-    else
+    elif [ ! "${PROTON_BRANCH}" = "pipetto-crypto_9.0" ]; then
         patch -p1 < "${scriptdir}"/wine-virtual-memory.patch || {
             echo "This patch did not apply. Stopping..."
             exit 1
