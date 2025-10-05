@@ -520,11 +520,11 @@ if [ "$TERMUX_GLIBC" = "true" ]; then
                 exit 1
             }
             clear
-        elif [ "${PROTON_BRANCH}" = "proton_9.0" ]; then
+        elif [ "${PROTON_BRANCH}" = "proton_9.0" ] || [ "${PROTON_BRANCH}" = "pipetto-crypto_9.0" ]; then
             echo "Applying esync patch"
             patch -d wine -Np1 < "${scriptdir}"/proton-9.0-esync.patch && \
-            echo "Applying change BitBlt to StetchBlt patch"
-            patch -d wine -Np1 < "${scriptdir}"/change-BitBlt-to-StetchBlt.patch && \
+            # echo "Applying change BitBlt to StetchBlt patch"
+            # patch -d wine -Np1 < "${scriptdir}"/change-BitBlt-to-StetchBlt.patch && \
             echo "Applying address space patch"
             patch -d wine -Np1 < "${scriptdir}"/proton-9.0-termux-wine-fix.patch && \
             # echo "Applying x11 to working version patch"
@@ -596,13 +596,13 @@ fi
 ### Experimental addition to address space hackery
 if [ "$TERMUX_GLIBC" = "true" ]; then
 echo "Applying additional address space patch... (credits to Bylaws)"
-    if [ "${PROTON_BRANCH}" = "proton_9.0" ]; then
+    if [ "${PROTON_BRANCH}" = "proton_9.0" ] || [ "${PROTON_BRANCH}" = "pipetto-crypto_9.0" ]; then
         patch -p1 < "${scriptdir}"/proton-9.0-wine-virtual-memory.patch || {
             echo "This patch did not apply. Stopping..."
             exit 1
         }
         clear
-    elif [ ! "${PROTON_BRANCH}" = "pipetto-crypto_9.0" ]; then
+    else
         patch -p1 < "${scriptdir}"/wine-virtual-memory.patch || {
             echo "This patch did not apply. Stopping..."
             exit 1
