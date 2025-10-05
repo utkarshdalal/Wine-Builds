@@ -91,7 +91,7 @@ export DO_NOT_COMPILE="false"
 # Make sure that ccache is installed before enabling this.
 export USE_CCACHE="${USE_CCACHE:-false}"
 
-export WINE_BUILD_OPTIONS="--disable-winemenubuilder --disable-win16 --enable-win64 --disable-tests --without-capi --without-coreaudio --without-cups --without-gphoto --without-osmesa --without-oss --without-pcap --without-pcsclite --without-sane --without-udev --without-unwind --without-usb --without-v4l2 --without-wayland --without-xinerama --without-xshape"
+export WINE_BUILD_OPTIONS="--without-ldap --disable-win16 --enable-win64 --disable-tests --with-pulse --with-gstreamer --with-ffmpeg --with-pthread --without-dbus --with-freetype --enable-wineandroid_drv=no --enable-nls --without-capi --without-coreaudio --without-cups --without-gettext --without-gphoto --with-gettextpo=no --without-inotify --without-netapi --without-osmesa --without-opencl --without-oss --without-pcap --without-pcsclite --without-sane --without-udev --without-unwind --without-usb --without-v4l2 --without-wayland --without-xfixes --without-xinerama --without-xshape --without-xcomposite --without-xcursor --without-xrandr --without-xrender --without-xshm --without-xxf86vm"
 
 # A temporary directory where the Wine source code will be stored.
 # Do not set this variable to an existing non-empty directory!
@@ -316,7 +316,9 @@ elif [ "$WINE_BRANCH" = "wayland" ]; then
                                --without-xcursor --without-opengl \
                                ${WINE_BUILD_OPTIONS}"
 elif [ "$WINE_BRANCH" = "proton" ]; then
-	if [ -z "${PROTON_BRANCH}" ]; then
+    if [ "${PROTON_BRANCH}" = "pipetto-crypto_9.0" ]; then
+        git clone https://github.com/utkarshdalal/pipetto-crypto-wine.git -b proton-9.0-x86_64
+	elif [ -z "${PROTON_BRANCH}" ]; then
 		git clone https://github.com/ValveSoftware/wine
 	else
 		git clone https://github.com/ValveSoftware/wine -b "${PROTON_BRANCH}"
