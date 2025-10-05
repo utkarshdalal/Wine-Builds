@@ -91,7 +91,7 @@ export DO_NOT_COMPILE="false"
 # Make sure that ccache is installed before enabling this.
 export USE_CCACHE="${USE_CCACHE:-false}"
 
-export WINE_BUILD_OPTIONS="--without-ldap --disable-win16 --enable-win64 --disable-tests --with-pulse --with-gstreamer --with-ffmpeg --with-pthread --without-dbus --with-freetype --enable-wineandroid_drv=no --enable-nls --without-capi --without-coreaudio --without-cups --without-gettext --without-gphoto --with-gettextpo=no --without-inotify --without-netapi --without-osmesa --without-opencl --without-oss --without-pcap --without-pcsclite --without-sane --without-udev --without-unwind --without-usb --without-v4l2 --without-wayland --without-xfixes --without-xinerama --without-xshape --without-xcomposite --without-xcursor --without-xrandr --without-xrender --without-xshm --without-xxf86vm"
+export WINE_BUILD_OPTIONS="--without-ldap --disable-win16 --enable-win64 --disable-tests --with-pulse --with-gstreamer --with-ffmpeg --with-pthread --without-dbus --with-freetype --enable-wineandroid_drv=no --without-wineandroid --disable-wineandroid --enable-nls --without-capi --without-coreaudio --without-cups --without-gettext --without-gphoto --with-gettextpo=no --without-inotify --without-netapi --without-osmesa --without-opencl --without-oss --without-pcap --without-pcsclite --without-sane --without-udev --without-unwind --without-usb --without-v4l2 --without-wayland --without-xfixes --without-xinerama --without-xshape --without-xcomposite --without-xcursor --without-xrandr --without-xrender --without-xshm --without-xxf86vm"
 
 # A temporary directory where the Wine source code will be stored.
 # Do not set this variable to an existing non-empty directory!
