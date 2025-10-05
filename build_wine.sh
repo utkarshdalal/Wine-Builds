@@ -317,7 +317,7 @@ elif [ "$WINE_BRANCH" = "wayland" ]; then
                                ${WINE_BUILD_OPTIONS}"
 elif [ "$WINE_BRANCH" = "proton" ]; then
     if [ "${PROTON_BRANCH}" = "pipetto-crypto_9.0" ]; then
-        git clone https://github.com/utkarshdalal/pipetto-crypto-wine.git -b proton-9.0-x86_64
+        git clone https://github.com/utkarshdalal/pipetto-crypto-wine.git -b proton-9.0-x86_64 wine
 	elif [ -z "${PROTON_BRANCH}" ]; then
 		git clone https://github.com/ValveSoftware/wine
 	else
